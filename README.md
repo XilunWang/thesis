@@ -489,3 +489,10 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 当前文件：[研究内容与框架](presentations/output/开题报告_研究内容与框架_20261017_v2.pptx)。原桌面文件未覆盖。生成源为presentations/build-research-pages.mjs，读取本次桌面源文件。
 - 保留模块归属与来源于备注，明确概念方案、实例匹配监督和待核对接口。未实施模块或改动训练路线。第10、11页已逐页检查，其他页已渲染扫描，包结构与重导入检查完成。首轮素材序列化问题已修复，失败草稿移至私有构建目录，不作为交付。
 - 本轮未连接服务器。生成源及README已本地提交。GitHub推送失败：wincredman无法保存凭据，且终端无法交互读取用户名。PPT保存在本地忽略目录。
+
+### 2026-10-17 第10页实验表写回原PPT
+
+- 按用户要求，将截图第1、3、4、5组写入桌面“左怀琪-专业学位硕士开题PPT.pptx”第10页，采用可编辑的原生表格。仅更改第10页并新增其备注，其余原始文件部件逐字节保持一致。
+- 第5组保留SynTIDE预训练，但注明待论证且与模块同时变化，不能单独归因模块效果。预期SOTA等未经验证表述改为验证目标。实际实验路线与训练未变。
+- 构建源：presentations/build-ablation-table.mjs、patch-ablation-table.py。桌面原件写回前备份在私有构建目录。结构、原生表格、重导入与第10页渲染检查完成，未在PowerPoint应用内验证。
+- 未连接服务器。代码与README已本地提交；GitHub推送仍因wincredman凭据保存错误失败。
