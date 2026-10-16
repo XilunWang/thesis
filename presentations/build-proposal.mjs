@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';import path from 'node:path';import crypto fro
 const ROOT=path.resolve(import.meta.dirname,'..'),R='C:/Users/Lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies',SK='C:/Users/Lenovo/.codex/plugins/cache/openai-primary-runtime/presentations/26.1013.11914/skills/presentations';
 const {Presentation,PresentationFile,FileBlob}=await import(pathToFileURL(R+'/node/node_modules/@oai/artifact-tool/dist/artifact_tool.mjs'));
 process.env.RUNTIME_NODE_MODULES=R+'/node/node_modules';
-const B=ROOT+'/presentations/.build/proposal',T=ROOT+'/presentations/templates/proposal-template.pptx',F=ROOT+'/presentations/output/水下实例分割_硕士开题报告_20261016_v1.pptx';
+const B=ROOT+'/presentations/.build/proposal-v2',T=ROOT+'/presentations/templates/proposal-template.pptx',F=ROOT+'/presentations/output/水下实例分割_硕士开题报告_20261016_v2.pptx';
 const p0=await PresentationFile.importPptx(await FileBlob.load(T));const proto=p0.toProto();
 const text=e=>(e.paragraphs||[]).flatMap(x=>x.runs||[]).map(x=>x.text||'').join('');
 for(const i of [0,13]){proto.slides[i].elements=proto.slides[i].elements.filter(e=>e.type===7||(e.type===1&&!text(e)));proto.slides[i].speakerNotes=undefined;}
@@ -19,33 +19,50 @@ function lines(s,items){items.forEach((a,i)=>{tx(s,a[0],210,145+i*155,990,42,29,
 function table(s,v,widths,y=160,h=350,size=24){const t=s.tables.add({rows:v.length,columns:v[0].length,left:205,top:y,width:1020,height:h,values:v,columnWidths:widths});for(let r=0;r<v.length;r++)for(let c=0;c<v[0].length;c++){let a=t.getCell(r,c);a.fill=r===0?'#E9F1E9':'#FFFFFF';a.text.style={typeface:'微软雅黑',fontSize:size,color:r===0?green:ink,bold:r===0,verticalAlignment:'middle'};}t.borders.assign({style:'solid',fill:'#CAD7CB',width:.6});tables.push(s);}
 function foot(s,t){tx(s,t,210,651,1000,35,18,{color:'#666666'});}
 async function img(s,file,x,y,w,h){s.images.add({blob:new Uint8Array(await fs.readFile(ROOT+'/'+file)).buffer,contentType:'image/jpeg',alt:file,fit:'contain',position:{left:x,top:y,width:w,height:h}});}
-ordered.push(cover);tx(cover,'面向水下场景的\n实例分割方法研究',80,226,1120,185,62,{bold:true,color:'#FFFFFF',align:'center'});tx(cover,'专业学位硕士开题报告（题目暂定）',260,453,760,40,28,{color:green,align:'center'});tx(cover,'姓名：待填写      专业：待填写\n导师：待填写      汇报日期：待填写',340,515,650,112,26);notes(cover,'开题拟题。封面身份与正式汇报日期等待本人补充，不使用参考模板作者信息。当前版本内容截至2026年10月16日。');ordered.push(toc,d1);
-let s=take(b1,'1.1 研究背景：水下场景理解');
-lines(s,[['任务需求','海洋生态监测、水下巡检与机器人作业，需要识别目标类别，并区分每一个物体。'],['水下图像的困难','色偏、低对比度与遮挡使物体和背景难以区分；小目标、细长结构增加分割难度。'],['本课题的任务范围','输出每个目标的类别与像素区域，为水下目标计数、形态分析提供基础。']]);foot(s,'研究范围：单幅水下图像、多类别实例分割；暂不涉及实时部署与视频跟踪。');notes(s,'区分语义分割与实例分割：本课题需要分别识别同类的不同物体。应用价值是预期用途，不声称已部署。',[refs.water,refs.usis]);
-s=take(b1,'1.2 研究意义');lines(s,[['方法研究意义','分析通用分割模型在水下场景的错误，研究细节信息与实例轮廓监督如何协同。'],['实验研究意义','建立可复现的基线、诊断与消融流程，区分特征适配和掩码细化带来的实际作用。'],['应用意义','提升复杂背景下的目标分离质量，为水下目标统计、生态观测和巡检提供视觉处理方法。']]);notes(s,'意义来自任务需求及本课题拟研究问题，不能提前宣称方法有效。',[refs.water,refs.dive]);ordered.push(d2);
-s=take(b2,'2.1 通用实例分割研究');table(s,[['代表方法','核心思路','对本课题的启发'],['Mask R-CNN\nICCV 2017','候选区域内进行分类、定位与掩码预测','建立实例级目标分割框架'],['Mask2Former\nCVPR 2022','查询驱动的掩码预测，采用掩码注意力','选择其作为已验证的实验基线'],['Boundary IoU\nCVPR 2021','使用对边界质量更敏感的评价方式','补充整体AP之外的轮廓分析']],[235,420,365],170,365,24);tx(s,'研究切入点：在统一实例分割框架内验证水下适配设计',210,565,1010,62,27,{color:green,bold:true});notes(s,'Mask R-CNN是两阶段方法；Mask2Former可用于语义、实例与全景分割。Boundary IoU为评价方法，不是本课题的新模块。',[refs.mask,refs.m2f,refs.boundary]);
-s=take(b2,'2.2 水下实例分割研究');table(s,[['代表工作','主要设计','本课题关注'],['WaterMask\nICCV 2023','UIIS数据集；细节恢复、多层特征细化与边界学习','模块思路如何适配查询式分割'],['USIS-SAM\nICML 2024','面向水下显著实例的SAM适配；USIS10K数据集','区分显著实例与多类别任务口径'],['DiveSeg\nAAAI 2026*','DINOv2特征，AquaStyle Aligner与ObjectPrior Prompter','基础视觉特征的水下域适配']],[235,450,335],160,385,23);foot(s,'*会议标注据作者代码仓库；参考论文 arXiv:2511.08334。');notes(s,'WaterMask包含DSGAT、MFRM及BMS配合边界学习损失。DiveSeg官方代码基于DINOv2/Detectron2/Mask2Former；本项目尚未复现。任务与骨干不统一时只作参考比较。',[refs.water,refs.usis,refs.dive,'https://github.com/ettof/Diveseg']);
-s=take(b2,'2.3 研究问题与切入点');lines(s,[['问题一：细节和轮廓怎样有针对性地改善？','WaterMask提供细节恢复与边界监督思路，但其模块不能视为可直接插入Mask2Former的现成组件。'],['问题二：通用预训练特征怎样适应水下图像？','借鉴DINOv2与DiveSeg，明确适配参数、训练代价，以及独立于边界细化的贡献。'],['本课题的研究策略','先分析错误与实现接口，再开展单模块对照和组合消融；用证据决定保留哪些设计。']]);notes(s,'这些是拟研究问题，不是未经检索证明的文献空白。直接拼接已有模块或仅换骨干不构成已证明创新。',[refs.water,refs.m2f,refs.dino,refs.dive]);ordered.push(d3);
-s=take(b3,'3.1 研究目标与两项拟研究内容');table(s,[['研究内容','拟解决的问题','预期交付'],['一：细节与边界适配\n主要研究线','小目标及细长区域信息不足，部分目标轮廓不准确','Mask2Former适配方法、消融和边界评价'],['二：预训练特征的水下适配\n候选研究线','通用视觉表征与水下外观分布存在差异','轻量适配方案、域适配对照与效率分析']],[320,355,345],180,280,24);tx(s,'总体目标：在统一评价协议下改善水下实例分割质量',210,510,1010,70,28,{bold:true,color:green});tx(s,'第二项为拟议方案，具体结构和独立贡献仍需论证。',210,595,1010,48,24);notes(s,'保持既定主线，第二点仍未最终确定。本开题草案提出可执行候选以便讨论，不视为授权开始第二线训练。',['README.md 第2节']);
-s=take(b3,'3.2 研究内容一：细节与边界适配');lines(s,[['研究假设','在Mask2Former的高分辨率掩码特征中补充细节信息，并加入实例边界监督，可能改善轮廓表达。'],['拟研究设计','借鉴DSGAT、MFRM与边界学习损失，分别考察特征细化、边界分支与监督方式。'],['接口与对照重点','处理RoI特征与查询式掩码的结构差异，核对实例匹配、尺度对齐和损失归一化，保留原基线作严格对照。']]);foot(s,'候选插入位置：像素解码器的掩码特征端；具体结构以源码核对结果为准。');notes(s,'WaterMask模块名称为既有工作。此处是拟适配路径，未实现、未验证，不把边界分支或模块迁移本身宣称为新颖贡献。边界损失权重在训练侧开发验证集确定。',[refs.water,refs.m2f]);
-s=take(b3,'3.3 研究内容二：水下特征适配（拟）');lines(s,[['研究假设','固定分割解码流程后，少量可训练适配参数能否增强预训练视觉特征对水下外观的表达？'],['候选实现路径','采用DINOv2提取特征，融合浅层细节与深层语义，再以轻量适配层对接Mask2Former。'],['独立性验证','固定同一DINOv2骨干，比较无适配、基础适配与所提适配；第一项保持关闭，最后再验证两项组合。']]);foot(s,'参考DINOv2 / DiveSeg；不以更大骨干或更多预训练数据带来的提升代替适配贡献。');notes(s,'DINOv2轻量适配和特征融合属于候选方向，尚未确认新颖性。优先限定一种骨干规模，先开展可行性和文献核对。原R50仅作整体参考，不能隔离DINOv2适配收益。',[refs.dino,refs.dive,'https://github.com/ettof/Diveseg']);
-s=take(b3,'3.4 实验设计与评价协议');table(s,[['环节','拟采用的规则'],['数据与开发','沿用UIIS官方划分；拟在训练集内部建立开发验证子集'],['基线与消融','第一项固定R50基线条件；第二项固定相同DINOv2骨干'],['评价指标','实例AP/AP50/AP75、尺寸及类别AP；补充Boundary IoU'],['可靠性与开销','固定案例对照、关键实验多种子、参数量/显存/推理耗时'],['测试集使用','诊断已使用测试预测；后续调参使用训练侧验证，披露现有使用记录']],[250,770],160,390,24);foot(s,'训练侧验证是拟新增协议，实施前需统一确认；官方测试集及已知重复图片保持原样。');notes(s,'用户此前未建立内部验证集，不能写成已经划分。新协议只作用于未来开发，在实施前确认；最终对照使用一致规则，不能将测试集用于挑选最佳超参数。Boundary IoU还未计算。',['README.md',refs.boundary]);
-s=take(b3,'3.5 已有研究基础与可行性');table(s,[['已有工作','完成情况'],['数据与流程','UIIS 3937张训练 / 691张测试，7类；完成审计及保存恢复验证'],['正式基线','Mask2Former-R50，COCO预训练，单V100，36轮 / 70884步'],['全量评价','实例AP 32.6，AP50 47.6，AP75 35.3'],['误差诊断','691张三档阈值分析；固定六张实例可视化；匹配数经COCOeval复核']],[245,775],165,335,24);tx(s,'现有基础支持进入方法适配实验；当前尚无自有改进成绩。',210,545,1000,68,27,{bold:true,color:green});notes(s,'实际设置：batch2、FP32、AdamW 1e-4、LSJ1024、测试1333x800。固定第36轮，没有按测试集选优。官方WaterMask R50 AP26.4与本次32.6仅参考，训练条件不统一，不作为创新成绩。',['reports/uiis-baseline-36e-evaluation/metrics.json','reports/uiis-error-analysis/diagnostics.json','README.md']);
-s=take(b3,'3.6 问题证据与后续诊断');await img(s,'reports/uiis-baseline-36e-evaluation/examples/1.jpg',205,157,490,290);await img(s,'reports/uiis-baseline-36e-evaluation/examples/2.jpg',730,157,490,290);tx(s,'细长区域缺失',205,465,490,42,27,{bold:true,color:green});tx(s,'小目标未达到显示阈值',730,465,490,42,27,{bold:true,color:green});tx(s,'左图为标注、右图为预测，显示阈值0.5。\n全量诊断：小目标匹配率54.9%，大目标73.1%；同类IoU≥0.5视为匹配。',210,525,1000,90,25);foot(s,'案例只能提示问题；尚需边界专用评价，不能将所有漏检和定位错误归结为边界。');notes(s,'两例来自固定前六张：L_1001与L_1025。AP和阈值匹配率不可直接比较，预测/标注未改。',['reports/uiis-baseline-36e-evaluation/examples','reports/uiis-error-analysis/report.md']);
-s=take(b3,'3.7 拟探索的贡献与验证要求');table(s,[['拟探索贡献','需要提供的证据'],['查询式分割中的细节与边界协同','适配机制说明；原版、单项、组合消融；边界指标与整体AP'],['水下预训练特征的有效适配','相同骨干下比较；适配参数、收益与训练开销；域差异分析'],['两项设计的互补性','独立实验先成立，再比较组合效果和新增成本']],[380,640],180,300,25);tx(s,'创新性仍需文献检索与实验共同确认，开题阶段不预设涨点。',210,545,1000,76,27,{color:green,bold:true});notes(s,'已有模块、现成骨干和诊断工具必须引用。若单项无稳定收益，保留负结果并调整假设，不靠组合数量或论文篇幅证明贡献。',['README.md 第2节']);ordered.push(d4);
-s=take(b4,'4.1 分阶段研究计划（拟）');table(s,[['阶段','相对时间','主要任务与验收'],['问题与方案确认','第1月','补边界评价、模块接口核对；形成首个可实现方案'],['第一研究点','第2—3月','单模块训练、严格消融及重复验证；完成方法章节'],['第二研究点','第4—5月','确定独立问题、适配对照；验证与第一项的组合'],['论文与答辩','第6月','统一复核结果、补充比较、论文修改与答辩准备']],[240,180,600],165,365,24);tx(s,'按阶段验收推进，实验实施与论文写作同步进行。',210,565,1000,55,27,{color:green,bold:true});foot(s,'以开题通过后的月份计，按学校节点与实际毕业时间调整。');notes(s,'用户未提供开题与毕业日期，采用相对月份，不沿用模板2025/2026时间表。每阶段检查结果和范围，阶段内PPT不自动反复生成。');
-s=take(b4,'4.2 实施风险与调整方案');lines(s,[['边界改善不明显','先区分漏检与轮廓问题；若边界证据不足，回到细节和特征表达问题，避免强行保留无效模块。'],['第二研究点范围过大','先固定一种DINOv2规模和一种适配方案，用小规模可行性实验评估成本，再确定正式预算。'],['比较条件与实验可靠性','统一自身消融条件，公开预训练和数据规则；不直接把不同论文公布数字的差值当作方法贡献。']]);notes(s,'风险是研究方案的限制，不能提前承诺所有模块有效或保证毕业。先完成第一主线，再启动经确认的第二点。',['README.md']);
-s=take(b4,'4.3 预期成果');lines(s,[['方法与实验证据','形成两项可区分的研究内容及其验证材料，包括对照、消融、效率分析与失败案例。'],['可复现研究材料','整理配置、代码、训练日志、评估协议和可视化；维护统一的实验记录和阶段汇报。'],['学位论文与答辩材料','完成问题分析、方法设计、实验结果及局限讨论，依据学校规范撰写论文并准备答辩。']]);foot(s,'预期成果以实际验证结果为准，不预设论文发表数量或固定精度提升。');notes(s,'当前只有基线与初步诊断完成，其余均为预期交付。');
-s=take(b4,'主要参考文献');const rr=[['[1]','He et al. Mask R-CNN. ICCV, 2017.'],['[2]','Cheng et al. Masked-Attention Mask Transformer for Universal Image Segmentation. CVPR, 2022.'],['[3]','Lian et al. WaterMask: Instance Segmentation for Underwater Imagery. ICCV, 2023.'],['[4]','Oquab et al. DINOv2: Learning Robust Visual Features without Supervision. arXiv:2304.07193.'],['[5]','Lian et al. Diving into Underwater: Segment Anything Model Guided Underwater Salient Instance Segmentation and A Large-scale Dataset. ICML, 2024.'],['[6]','Chen et al. Empowering DINO Representations for Underwater Instance Segmentation via Aligner and Prompter. arXiv:2511.08334.'],['[7]','Cheng et al. Boundary IoU: Improving Object-Centric Image Segmentation Evaluation. CVPR, 2021.']];rr.forEach((r,i)=>tx(s,r.join(' '),205,125+i*77,1020,70,21));notes(s,'论文完整链接如下。DiveSeg作者仓库标记为AAAI2026，此处使用可核实的arXiv论文标识。',Object.values(refs));
-ordered.push(end);tx(end,'恳请各位老师批评指正',110,265,1060,105,64,{bold:true,color:'#FFFFFF',align:'center'});tx(end,'面向水下场景的实例分割方法研究',220,495,840,58,31,{color:green,align:'center'});tx(end,'专业学位硕士开题报告',300,575,680,48,27,{align:'center'});notes(end,'后续重点是完成问题证据和首个适配方案，第二研究点保持拟议状态。');
-p.slides.keep(p.slides.items.map((s,i)=>ordered.includes(s)?i:-1).filter(i=>i>=0));
-p.slides.reorder(ordered.map(s=>'sl/'+s.id));
+
+await fs.mkdir(B,{recursive:true});
+ordered.push(cover);
+tx(cover,'面向水下场景的\n实例分割方法研究',80,226,1120,185,62,{bold:true,color:'#FFFFFF',align:'center'});
+tx(cover,'硕士开题报告：让水下目标分得更完整、更准确',200,450,880,50,28,{color:green,align:'center'});
+tx(cover,'姓名：待填写      专业：待填写\n导师：待填写      汇报日期：待填写',340,525,650,100,26);
+notes(cover,'题目暂定。这次汇报主要说明：为什么研究水下分割，已经做了什么，接下来准备怎样改。');
+let s=take(b1,'1. 我研究什么，为什么值得做？');
+lines(s,[['把每一个水下目标单独圈出来','比如一张照片里有三只海星，模型不仅要认出“海星”，还要把每只海星的身体范围分别圈出来。这就是实例分割。'],['水下图片比普通照片更难处理','水里的光线、颜色和清晰度会变化，动物还可能很小或互相遮挡。因此，模型容易漏掉目标，也可能把身体的一部分分到背景里。'],['做好之后有什么用','分得更准确，就更方便统计水下生物数量、观察目标形态，也能为水下巡检提供信息。本课题先研究单张图片，暂不做视频和机器人部署。']]);notes(s,'可以用“认出是什么，再把每一个分别圈出来”解释任务。应用是研究意义，尚未部署。',[refs.water]);
+s=take(b2,'2. 别人做到了哪一步？');
+table(s,[['已有方法','简单理解','我准备怎样借鉴'],['Mask2Former\n本课题的起点','一个通用分割模型，可以学习怎样把图片中的物体分开','先在水下数据上训练，作为后续比较的起点'],['WaterMask\n水下专用方法','针对水下图像，研究怎样补充目标细节、改善分割轮廓','借鉴其处理思路，逐项适配到Mask2Former'],['DINOv2 / DiveSeg\n第二点的候选方向','利用预训练视觉模型提供图像信息，并研究怎样适应水下场景','后续考虑改善模型对水下图像的理解']],[260,400,360],155,355,24);
+tx(s,'我的研究需要回答：借鉴这些方法以后，究竟改善了什么？\n因此要做改动前后的比较，不能只把几个模块装在一起。',210,550,1000,95,26,{color:green});
+foot(s,'参考：Mask2Former（2022）、WaterMask（2023）、DINOv2及DiveSeg。完整链接见备注。');notes(s,'Mask2Former是基线。WaterMask模块并不能直接照搬，具体接口还要核对。第二点未定。',[refs.m2f,refs.water,refs.dino,refs.dive]);
+s=take(b3,'3. 我已经完成了哪些工作？');
+table(s,[['已完成的工作','具体结果'],['准备数据','使用UIIS水下数据，3937张训练图片、691张测试图片，共7类目标'],['训练起点模型','已经完成Mask2Former-R50的36轮训练。R50指其中负责提取图像信息的网络'],['评价整体效果','AP 32.6、AP50 47.6、AP75 35.3。这些是分割评分，通常越高越好'],['检查错误','完成全量预测分析，并查看固定案例，寻找漏检和目标范围不准确的问题']],[255,765],155,350,24);
+tx(s,'现在已经有一个能运行、能比较的起点模型。\n这些成绩属于现成模型在UIIS上的结果，自己的改进还没有开始。',210,550,1000,90,27,{bold:true,color:green});
+notes(s,'AP综合不同匹配严格程度的结果，32.6不是“32.6%的像素正确”。模型使用COCO预训练。没有复现WaterMask，不能把跨论文分差归功于自己。',['reports/uiis-baseline-36e-evaluation/metrics.json','README.md']);
+s=take(b3,'4. 现有结果还有什么问题？');
+await img(s,'reports/uiis-baseline-36e-evaluation/examples/1.jpg',205,140,490,280);
+await img(s,'reports/uiis-baseline-36e-evaluation/examples/2.jpg',730,140,490,280);
+tx(s,'海星的细长部分没有完整分出来',205,430,490,45,25,{bold:true,color:green});
+tx(s,'部分小目标没有出现在显示结果中',730,430,490,45,25,{bold:true,color:green});
+tx(s,'每组图左边是人工标注，右边是模型预测。右图只显示模型较有把握的结果。\n这些例子说明还有改进空间，但仅看几张图，不能说明所有错误都来自边界。\n下一步要进一步检查：目标是没被找到，还是找到了、但身体范围没有圈准确。',210,490,1000,145,25);
+foot(s,'显示阈值为0.5。全量统计和固定案例用于找问题，边界质量还需要专门评价。');
+notes(s,'展示原始预测，不修改结果。小目标未显示可能与分数阈值有关。应区别漏检、分类错误及轮廓偏差。',['reports/uiis-baseline-36e-evaluation/report.md','reports/uiis-error-analysis/report.md']);
+s=take(b3,'5. 第一个研究点：让目标圈得更完整');
+lines(s,[['想解决什么问题','像海星的细长腕足、小目标的轮廓，可能在分割时丢掉。准备先确认这些问题有多普遍，再决定优先改哪里。'],['准备怎么改','借鉴WaterMask的DSGAT、MFRM和边界学习损失。简单说，就是尝试补充细节信息，并在训练时让模型更关注目标轮廓。'],['具体怎么推进','先核对模块能接在什么位置，再一次只改一项。只有实验显示有效，才尝试组合。最终要解释为什么这样改，而不只是搬用模块。']]);
+foot(s,'这是拟研究方案。目前还没有接入这些模块，也没有得到改进后的分数。');notes(s,'DSGAT用于细节恢复，MFRM涉及特征细化。BLL是边界学习损失，属于训练监督。WaterMask与Mask2Former结构不同，需调整特征尺寸、实例对应及监督方式。',[refs.water,refs.m2f]);
+s=take(b3,'6. 第二个研究点：让模型更懂水下图片');
+lines(s,[['与第一点有什么不同','第一点关注目标细节和轮廓。第二点准备研究：水下图片颜色偏、清晰度差时，模型怎样提取更有用的图像信息。'],['可以考虑什么办法','DINOv2是已经从大量图像中学习过的视觉模型。可以借鉴DiveSeg，让它提供图像信息，再研究怎样调整这些信息，使其更适合水下分割。'],['目前准备做到哪一步','这一点还只是候选方向。先查清别人已经做过什么，再用小实验判断是否值得继续。比较时使用相同的DINOv2，才能看出适配方法的作用。']]);
+foot(s,'需要先确定具体问题和自己的改动，不能把“换一个更大的模型”直接当作研究贡献。');notes(s,'不要承诺DINOv2一定优于现有基线。第二研究点的独立性、创新性和成本都尚需论证。',[refs.dino,refs.dive]);
+s=take(b3,'7. 怎样证明改动确实有用？');
+lines(s,[['先保证比较公平','改动前后使用同样的数据规则，尽量保持训练轮数、预训练权重和训练方式一致。官方划分和已知重复图片都按既定规则保留。'],['每次只检验一个变化','先跑原模型，再分别加入每项改动，最后看组合效果。这样才能知道是哪项起作用。这种逐项比较，在论文中叫“消融实验”。'],['既看分数，也看具体图片','比较AP等整体评分，还要检查小目标、轮廓和固定案例。同时记录训练时间和显存，判断提升是否值得。关键结果再重复验证。']]);
+foot(s,'WaterMask的论文数字可作参考。严格比较还需要说明或对齐预训练、优化器和数据增强等条件。');notes(s,'不使用测试集反复选超参数。后续开发验证规则需先统一确认。边界指标尚未计算，不预设一定有提升。',['README.md',refs.boundary]);
+s=take(b4,'8. 接下来按什么顺序做？');
+table(s,[['阶段','主要工作','完成后应拿到什么'],['先把问题查清楚','补充边界检查，阅读WaterMask代码，选一个最先尝试的改动','明确“改哪里、为什么改”的方案'],['完成第一研究点','逐项改模型，做完整训练和改动前后的比较','方法说明、对照表和有代表性的图片'],['再确定第二研究点','核对DINOv2 / DiveSeg路线，先做小实验，再决定正式方案','可独立解释的第二项研究及实验结果'],['整理论文和答辩','统一实验记录，补必要的比较，边做边写论文','论文正文、结果图表和答辩材料']],[215,420,385],150,390,24);
+tx(s,'现在处于第一阶段：基线已完成，正在查问题、准备第一个改动。',210,575,1000,65,27,{bold:true,color:green});
+foot(s,'具体月份等待开题、毕业时间确认。按阶段推进，避免同时铺开过多实验。');notes(s,'仍处于P2，未进入改进模型正式训练。第二点不是本轮已确定的任务。',['README.md 第2节']);
+s=take(b4,'9. 预期形成什么成果？');
+lines(s,[['一个有证据支持的改进方法','说明现有模型哪里做得不足，自己的修改怎样解决问题，并用相同条件下的实验验证。如果改动无效，就记录原因并调整方案。'],['两项能够分别讲清楚的研究内容','第一项围绕细节和轮廓，第二项考虑水下图像特征。第二项需要进一步论证，最终各自解决什么问题、有什么贡献，都要有实验支持。'],['一套可复现的论文材料','保留代码、配置、训练记录和评价结果，整理对照表及图片，形成论文与答辩材料。当前最重要的是先完成第一个有效改动。']]);
+foot(s,'现阶段是研究计划，不预先承诺精度提升或发表成果。恳请各位老师批评指正。');notes(s,'总结时强调已经完成基线，下一步是从证据出发设计和验证改动。');
+p.slides.keep(p.slides.items.map((s,i)=>ordered.includes(s)?i:-1).filter(i=>i>=0));p.slides.reorder(ordered.map(s=>'sl/'+s.id));
 const candidate=B+'/candidate.pptx';await(await PresentationFile.exportPptx(p)).save(candidate);
 for(let i=0;i<ordered.length;i++)await fs.writeFile(B+`/slide-${i+1}.png`,new Uint8Array(await(await p.export({slide:ordered[i],format:'png',scale:1})).arrayBuffer()));
-await fs.writeFile(B+'/manifest.json',JSON.stringify({slideCount:ordered.length,tableOwners:tables.map(s=>ordered.indexOf(s)+1),output:F},null,2));
 const {finalizePresentation}=await import(pathToFileURL(SK+'/container_tools/artifact_tool_utils.mjs'));
-console.log(await finalizePresentation({workspaceDir:ROOT,candidatePath:candidate,finalPath:F,pythonExecutable:R+'/python/python.exe',integrityValidatorPath:SK+'/container_tools/inspect_presentation_package_integrity.py',layoutValidatorPath:SK+'/container_tools/inspect_presentation_layout_geometry.py',layoutArgs:['--expected-slide-size-emu','12192000,6858000','--expected-slide-count',String(ordered.length),'--validate-heading-fit',...tables.flatMap(s=>['--require-native-table-slide',String(ordered.indexOf(s)+1)])],requiredNativeTableOwnerSlides:tables.map(s=>ordered.indexOf(s)+1),fontPolicy:{basis:'reference',families:['微软雅黑','Times New Roman Bold','Times New Roman Bold Italic'],referencePath:T,referenceSha256:crypto.createHash('sha256').update(await fs.readFile(T)).digest('hex')},verifyArtifactToolImport:true,receiptPath:B+'/validation.json'}));
-
-
-
-
+try{console.log(await finalizePresentation({workspaceDir:ROOT,candidatePath:candidate,finalPath:F,pythonExecutable:R+'/python/python.exe',integrityValidatorPath:SK+'/container_tools/inspect_presentation_package_integrity.py',layoutValidatorPath:SK+'/container_tools/inspect_presentation_layout_geometry.py',layoutArgs:['--expected-slide-size-emu','12192000,6858000','--expected-slide-count','10','--validate-heading-fit',...tables.flatMap(s=>['--require-native-table-slide',String(ordered.indexOf(s)+1)])],requiredNativeTableOwnerSlides:tables.map(s=>ordered.indexOf(s)+1),fontPolicy:{basis:'reference',families:['微软雅黑'],referencePath:T,referenceSha256:crypto.createHash('sha256').update(await fs.readFile(T)).digest('hex')},verifyArtifactToolImport:true,receiptPath:B+'/validation.json'}));}
+catch(e){if(e.code!=='EPERM'||e.syscall!=='link')throw e;await fs.copyFile(candidate,F,1);const hash=crypto.createHash('sha256').update(await fs.readFile(F)).digest('hex');await fs.writeFile(B+'/copy-receipt.json',JSON.stringify({finalPath:F,sha256:hash,limitation:'finalizer reached final hard-link publication after validation, Windows EPERM; delivered using exclusive copy',slideCount:10},null,2));console.log('COPIED_AFTER_LINK_EPERM',F);}

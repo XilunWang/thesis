@@ -442,3 +442,12 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 本轮仅本地材料制作，未连接服务器、未启动训练；研究仍在P2。下一步仍是边界评价与模块接口核对。PPT只在大阶段或明确要求时更新。
 - Git状态：本次生成源及文档已创建本地提交；推送因本机Git凭据程序NtCreateDirectoryObject / 0xC0000022错误失败，尚未同步GitHub。PPT与模板沿用本地忽略规则，不上传GitHub。
 
+
+### 2026-10-16 开题稿简化为10页（v2）
+
+- 按用户反馈重写为口语化的10页：封面、背景意义、研究现状、已完成工作、问题案例、第一研究点、第二候选研究点、实验比较、推进计划、预期成果。
+- 当前使用：[10页开题报告v2](presentations/output/水下实例分割_硕士开题报告_20261016_v2.pptx)。保留23页v1与原阶段汇报作为历史版本。
+- build-proposal.mjs生成v2，build-proposal-v1.mjs保留v1生成源。减少术语并增加解释，例如实例分割、R50、逐项比较。第二点仍为候选，身份日期待补，未改变研究状态或数据规则。
+- 全部10页完成渲染及视觉检查，结构/布局/字体/重导入检查完成。finalizer在最终硬链接发布时报EPERM，使用普通复制交付，记录在presentations/.build/proposal-v2/copy-receipt.json。未在原生PowerPoint打开验证。
+- 本轮未访问训练服务器。源码与README已本地提交；远程推送仍因本机Git凭据程序NtCreateDirectoryObject错误失败。PPT和模板仍仅本地保存。
+
