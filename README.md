@@ -451,3 +451,11 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 全部10页完成渲染及视觉检查，结构/布局/字体/重导入检查完成。finalizer在最终硬链接发布时报EPERM，使用普通复制交付，记录在presentations/.build/proposal-v2/copy-receipt.json。未在原生PowerPoint打开验证。
 - 本轮未访问训练服务器。源码与README已本地提交；远程推送仍因本机Git凭据程序NtCreateDirectoryObject错误失败。PPT和模板仍仅本地保存。
 
+
+### 2026-10-16 开题稿正式正文与演讲者备注（v3）
+
+- 按用户反馈保留10页，将正文改为正式的开题汇报表述，解释性内容移入各页演讲者备注。
+- 当前使用：[开题报告v3](presentations/output/水下实例分割_硕士开题报告_20261016_v3.pptx)。每页均含建议讲稿，相关页补充术语解释、答辩提醒及来源。历史v1/v2和阶段汇报保留。
+- 已逐页检查10页渲染图，并直接读取PPTX内部notesSlides，确认10页均写入讲稿。结构、布局、字体和重导入检查完成；最终硬链接发布遇Windows EPERM，按既有独占复制方式交付。未在原生PowerPoint验证。
+- 正文与备注均区分已完成的基线、拟开展的第一点和候选第二点；未变更数据、训练或研究阶段。身份与日期仍待补充。
+- 本轮只修改本地汇报与生成源，README同步更新；已创建本地提交；GitHub推送因本机凭据程序NtCreateDirectoryObject错误失败，尚未远程同步。
