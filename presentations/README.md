@@ -62,3 +62,7 @@ output/水下实例分割_硕士开题报告_20261016_v5.pptx。突出任务输�
 ### 2026-10-17 第10页消融表
 
 按用户明确要求直接写回桌面原PPT，第10页包含截图第1、3、4、5组。其他页不变。SynTIDE为待论证策略，第5组不作为纯模块消融。表格与备注可编辑。构建源build-ablation-table.mjs及patch-ablation-table.py，补丁保留原文件其余部件。
+
+### 指定v2文件第7、8页研究现状更新
+
+2026-10-17已完成修改，原位覆盖因文件占用失败。完成版为output/开题报告_研究内容与框架_20261017_v2_研究现状更新.pptx。待原文件保存并关闭后写回。第7页介绍Mask R-CNN、WaterMask，第8页介绍Mask2Former及本课题切入点。正文和备注均可编辑，其他页面不变。构建源build-related-work.mjs、patch-related-work.py。

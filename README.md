@@ -496,3 +496,9 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 第5组保留SynTIDE预训练，但注明待论证且与模块同时变化，不能单独归因模块效果。预期SOTA等未经验证表述改为验证目标。实际实验路线与训练未变。
 - 构建源：presentations/build-ablation-table.mjs、patch-ablation-table.py。桌面原件写回前备份在私有构建目录。结构、原生表格、重导入与第10页渲染检查完成，未在PowerPoint应用内验证。
 - 未连接服务器。代码与README已本地提交；GitHub推送仍因wincredman凭据保存错误失败。
+
+### 2026-10-17 研究现状写入指定文件第7、8页
+
+- 已完成指定v2文件的修改，但原文件被其他进程占用，覆盖失败。完成版暂存presentations/output/开题报告_研究内容与框架_20261017_v2_研究现状更新.pptx，待用户保存并关闭原文件后写回。第7页为Mask R-CNN与WaterMask，第8页为Mask2Former及研究切入点。正式内容在页面，术语解释、来源和研究状态在演讲者备注。
+- 生成源build-related-work.mjs，定点补丁patch-related-work.py。仅两个slide及对应notes部件改变，其余文件部件逐字节一致。已检查两页渲染、结构与重导入，原文件修改前备份保留于私有构建目录。未改桌面另一份PPT，未操作服务器。
+- 生成源和README已本地提交；GitHub仍因wincredman凭据错误推送失败。
