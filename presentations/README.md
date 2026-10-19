@@ -84,3 +84,10 @@ output/水下实例分割_硕士开题报告_20261016_v5.pptx。突出任务输�
 - 仅slide13及其notes部件修改，其他文件部件逐字节一致。已检查修改前后渲染、包结构/布局与重导入。finalizer检查后硬链接发布EPERM，仅针对该错误独占复制交付，未在PowerPoint内验证。
 - 构建源build-flow-clarified.mjs及patch-flow-clarified.py。修改前备份保留presentations/.build/flow-clarified/original.pptx；重复构建须确保源文件仍为用户待编辑版本，使用未占用输出路径。未运行服务器实验；后续仍为P2边界评价与P3接口核对。
 - 生成源和两份README已本地提交。GitHub推送失败：Git凭据进程出现NtCreateDirectoryObject访问错误，无法获取用户名；未同步服务器。
+
+### 2026-10-19 流程图再次重绘并补充讲解
+
+- 当前交付：presentations/output/开题报告_流程图重绘与讲解_20261019.pptx，第13页。原指定文件仍被占用，未覆盖，其他页部件逐字节保持原样。
+- DSGAT嵌入像素解码器内部，以空间布局说明拟适配位置，不再用外部输入箭头。上半部分展示原有分支及汇合：A空间/掩码特征，B实例查询，结合生成C初始实例掩码，并保留类别分支。
+- 下半部分明确以A/B/C为细化模块拟用输入，避免不完整的长连接线；字母为来源引用而非顺序编号。人工边界标签与边界预测共同输入BLL，训练监督与前向路径分开。备注完整解释阅读顺序、原有功能、拟适配作用及效果待实验验证。
+- 生成源build-flow-readable.mjs、patch-flow-readable.py，源文件备份在presentations/.build/flow-readable/original.pptx。渲染检查与结构/布局/重导入检查通过；finalizer硬链接发布EPERM后使用独占复制。未在PowerPoint应用内验证。未改变实验或连接服务器，下一步研究仍为P2边界评价和P3接口核对。
