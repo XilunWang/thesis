@@ -519,3 +519,4 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 第13页将Mask2Former原有功能标灰、拟适配设计标绿；拆开像素解码器与DSGAT、查询特征与掩码预测。MFRM细化与BLL训练监督分别标示，原有分类及掩码损失保留。原模型已经输出实例掩码，新增机制仍为待验证方案。备注补充实例匹配、特征聚合和简化反馈等说明。
 - 仅slide13及其notes部件修改，其他文件部件逐字节一致。已检查修改前后渲染、包结构/布局与重导入。finalizer检查后硬链接发布EPERM，仅针对该错误独占复制交付，未在PowerPoint内验证。
 - 构建源build-flow-clarified.mjs及patch-flow-clarified.py。修改前备份保留presentations/.build/flow-clarified/original.pptx；重复构建须确保源文件仍为用户待编辑版本，使用未占用输出路径。未运行服务器实验；后续仍为P2边界评价与P3接口核对。
+- 生成源和两份README已本地提交。GitHub推送失败：Git凭据进程出现NtCreateDirectoryObject访问错误，无法获取用户名；未同步服务器。
