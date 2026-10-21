@@ -7,7 +7,10 @@ This changes WaterMask's RoI/multiresolution setting to a shared query grid.
 import math
 import torch
 import torch.nn.functional as F
-from bll_core import boundary
+if __package__:
+    from .bll_core import boundary
+else:
+    from bll_core import boundary
 
 
 def query_boundary_loss(previous, final, gt_masks, final_matches, valid_shapes,
