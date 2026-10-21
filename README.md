@@ -447,3 +447,12 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 最新结果：[validation.json](reports/uiis-boundary-pilot-v2/validation.json)，Python 3.12.14、NumPy 2.3.5，明确记录 synthetic.passed=true、fixed_six.status=blocked；显式传回退出码2。首版结果保留在 uiis-boundary-pilot-v1，补充真实图像输入检查后以v2重验；不覆盖已有产物。reports被Git忽略，协议和脚本纳入Git。
 - 下一步：解决本地依赖正常读取/可运行环境问题，补官方OpenCV逐位对照，再以新的输出目录运行固定六图，并核对既有诊断逐图计数和Mask IoU。全部通过后才进入691张离线边界评价。不得由当前合成结果决定采用BLL或启动改进训练。
 - 本轮只新增协议/验证代码并更新README、AGENTS；未训练、未重新推理、未运行全量边界分析、未连接服务器，数据和AP成绩不变。检查后本地提交；Git远程推送由用户完成，本轮不推送，远程状态未核验。
+
+## 17. 2026-10-21：pycocotools 读取故障诊断
+
+- 已确认故障在文件访问层：不仅Python导入报PermissionError，PowerShell直接读取 __init__.py、枚举pycocotools子目录及读取其ACL也被拒绝；不是已经确认的缺包或ABI不兼容。
+- analysis-libs父目录ACL可读，包含显式Deny及面向子项的继承拒绝条目（含ReadPermissions、Synchronize等权限）；普通scripts目录没有对应显式Deny。当前命令以CodexSandboxOffline运行。由于子目录安全描述符及完整受限令牌未取得，尚不能证明某条父目录Deny就是唯一有效原因，也不能确定这些条目何时、由谁建立。
+- 本轮通过正式request_permissions渠道分别获准精确包目录/入口文件读取，以及父依赖目录读写修复权限，重试仍失败。授权工具返回获准不等于操作系统层已恢复访问。没有手工修改ACL、复制受限依赖、重装依赖或切换沙箱模式。
+- [诊断记录](reports/analysis-permission-diagnosis-20261021.json)保存观测与父目录ACL。报告被Git忽略；当前状态仍是未修复，六图验证未完成，不增加边界实验成绩。
+- 后续入口：按[官方Windows沙箱排障说明](https://learn.chatgpt.com/docs/windows/windows-sandbox)先完全退出并重启Codex，重新建立会话后验证pycocotools导入及RLE编码/解码；若成功再接续固定六图。重启是排障步骤，不能保证修复。若仍失败，需通过应用支持/沙箱维护流程检查有效权限及沙箱日志，不能在本会话内继续盲目重复授权或移除拒绝规则。
+- 本轮更新README和AGENTS并创建本地提交；远程推送由用户负责。没有运行训练、推理、服务器同步或远程推送。
