@@ -57,5 +57,42 @@
     "path": "mmdet/models/layers/msdeformattn_pixel_decoder.py",
     "local_path": "work/p3-reference/mmdet-3.3.0/msdeformattn_pixel_decoder.py",
     "sha256": "029C4CD38210624EA8145D672497912016CFC9AE5540A888AA20F6B202DEDED7"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "07042d254ffbdbf584ee0a5725e3c5e5e57e27c5",
+    "path": "mmdet/models/losses/cross_entropy_loss.py",
+    "local_path": "work/p3-reference/watermask-mmdet2/cross_entropy_loss.py",
+    "sha256": "7A8DF9F5131AC79F8B4BD4376442BA63B93E1C241D1AF2D9169463CF6ADC8BB3"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "07042d254ffbdbf584ee0a5725e3c5e5e57e27c5",
+    "path": "mmdet/models/roi_heads/water_roi_head.py",
+    "local_path": "work/p3-reference/watermask-mmdet2/water_roi_head.py",
+    "sha256": "89CCD20A5470E1BEEBFC6F91A97C87ED684FED8CDAD7828D6B6685B7D0584BCA"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "07042d254ffbdbf584ee0a5725e3c5e5e57e27c5",
+    "path": "mmdet/models/roi_heads/mask_heads/water_mask_head.py",
+    "local_path": "work/p3-reference/watermask-mmdet2/water_mask_head.py",
+    "sha256": "A87535F1AAEB0518712944380B4C37D7B0DD2FE096442EF25D8229A6A167D74B"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "07042d254ffbdbf584ee0a5725e3c5e5e57e27c5",
+    "path": "configs/_our_/water_r50_fpn_1x.py",
+    "local_path": "work/p3-reference/watermask-mmdet2/water_r50_fpn_1x.py",
+    "sha256": "50BF3C9CF96E29D86339972FA7FA78772475D218D0038B87F4B9DEA7A486D083"
+  },
+  {
+    "url": "https://openaccess.thecvf.com/content/ICCV2023/papers/Lian_WaterMask_Instance_Segmentation_for_Underwater_Imagery_ICCV_2023_paper.pdf",
+    "local_path": "work/p3-reference/WaterMask-paper.pdf",
+    "sha256": "E623065541C3F2552B1DB891F40665909C6CB44FA0DB7845AEF9008441104D63",
+    "pages_reviewed": [
+      5,
+      6
+    ]
   }
 ]
