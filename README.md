@@ -287,7 +287,6 @@ TIDE 优先作为 P2/P5 的误差分析候选工具；它本身不作为默认�
 | [train-uiis.py](scripts/train-uiis.py) | first/resume、状态检查、锁和阶段备份 |
 | [run-training.sh](scripts/run-training.sh)、[training-worker.sh](scripts/training-worker.sh) | screen 后台及状态/退出码 |
 | [test-training-entry.py](scripts/test-training-entry.py) | 4 图/5 小轮管理逻辑验证 |
-| [continue-overnight.py](scripts/continue-overnight.py)、[run-overnight.sh](scripts/run-overnight.sh) | 历史自动接续，已取消，不重启 |
 | [evaluate-uiis.py](scripts/evaluate-uiis.py)、[evaluation-worker.sh](scripts/evaluation-worker.sh) | 固定最终权重全量评估；metrics 已存在则拒绝覆盖 |
 | [report-uiis-evaluation.py](scripts/report-uiis-evaluation.py) | 从指标和预测绘图、生成报告，服务器环境实测通过 |
 
@@ -527,3 +526,11 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 图中展示全部GT/预测去向、按尺寸/类别的匹配率与样本数、匹配实例两种IoU均值，以及Boundary IoU<0.5计数。输入SHA256仍为b223862a6bdf4ae163d04e3910ec081ae9cb50f381338d3dc4bda20bac60b578；计数守恒检查通过，已打开PNG检查中文、数值与排版，无明显裁切或重叠。未安装新依赖，未重跑诊断、训练或推理，研究阶段与成绩不变。
 
 PNG保存在项目reports目录，该目录被Git忽略，需要单独保管；绘图脚本与README纳入本地提交。远程推送仍由用户负责，远程状态未核验。本轮本地提交结果以实际Git命令返回为准。
+
+## 25. 2026-10-21：项目清理完成
+
+按用户要求清理已取消的夜间自动化脚本 scripts/continue-overnight.py、scripts/run-overnight.sh，以及重复的 .local/verify-analysis.py（与 scripts/verify-uiis-error-analysis.py 哈希一致）、上传压缩包和文件清单、下载日志、安装wheel及临时缓存。共清理15个白名单文件/目录，释放272264585字节（约260 MiB）。保留实验报告、数据和官方重复图片、本地已安装依赖、官方边界参考源码、连接配置及当前分析/绘图/验证代码；移除废弃脚本索引。
+
+此前删除命令被执行策略拒绝，未删除文件。用户再次明确要求直接清理后，本轮取得项目定向写权限，执行已核对的清理脚本成功，退出码0、CLEANUP_OK。执行前验证所有目标均位于项目根目录内且无重解析点；执行后现存报告、训练/验证标注、两张官方重复图片、官方参考源码及标准误差验证脚本的SHA256均保持一致。逐项记录在 work/cleanup-20261021-183203.json（本地忽略文件）。
+
+此前本地提交因无法创建.git/index.lock失败。本轮检查改动范围与README差异后重新创建本地提交，结果以Git命令返回为准；远程推送仍由用户完成。本轮未训练、推理或连接服务器；研究阶段不变，下一步仍是P3接口核对。
