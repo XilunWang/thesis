@@ -164,7 +164,7 @@ def pilot():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, default=ROOT/'reports/uiis-boundary-pilot-v1')
+    parser.add_argument('--output', type=Path, default=ROOT/'reports/uiis-boundary-pilot')
     args = parser.parse_args()
     if args.output.resolve() == ROOT.resolve() or args.output.exists():
         raise FileExistsError('Use a new dedicated output directory; existing results are protected')

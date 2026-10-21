@@ -46,4 +46,4 @@ $env:PYTHONPATH = Join-Path (Get-Location) '.local/analysis-libs'
 python scripts/validate-uiis-boundary.py
 ```
 
-默认结果目录 `reports/uiis-boundary-pilot-v1/validation.json`，已存在则拒绝覆盖；重验用 `--output reports/uiis-boundary-pilot-v2`。JSON记录源码哈希、基础提交、运行环境、输入哈希（六图成功时）和失败信息。依赖不可读退出码2，不能当作整体验收通过。结果目录被Git忽略，需独立保管；协议和脚本随本地提交保留。
+默认结果目录 `reports/uiis-boundary-pilot/validation.json`，已存在则拒绝覆盖；如需重验，通过 `--output` 显式指定新的独立目录。JSON记录源码哈希、基础提交、运行环境、输入哈希（六图成功时）和失败信息。依赖不可读退出码2，不能当作整体验收通过。结果目录被Git忽略，需独立保管；协议和脚本随本地提交保留。

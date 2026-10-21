@@ -444,7 +444,7 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 本轮产物是条件配对诊断入口，不是 Boundary AP；不以条件均值替代整体评价。2%为预先选定的参考设置，未验证为UIIS最优容差。正式Boundary AP仍待单独实现与对齐。
 - 合成验证通过：7类案例（相同、平移、不相交、一空、双空、全图前景、细线）、手算面积/IoU、对称性、非法输入拒绝，以及12组独立逐像素窗口对照。60×60方块在100×100画布中平移3像素，Mask IoU=0.904762，Boundary IoU=0.333333；这是人工构造的测试结果，不是UIIS成绩。
 - 实际阻碍：本轮获准读取 .local/analysis-libs 后，pycocotools/__init__.py 仍报 PermissionError。固定六图入口未通过解码依赖导入，因此没有真实图像边界分数。未修改ACL、复制受限依赖或替换COCO解码器。当前环境也没有OpenCV，官方边界提取运行对照尚未完成；不能称小规模验证整体验收通过。
-- 最新结果：[validation.json](reports/uiis-boundary-pilot-v2/validation.json)，Python 3.12.14、NumPy 2.3.5，明确记录 synthetic.passed=true、fixed_six.status=blocked；显式传回退出码2。首版结果保留在 uiis-boundary-pilot-v1，补充真实图像输入检查后以v2重验；不覆盖已有产物。reports被Git忽略，协议和脚本纳入Git。
+- 当时两次运行的合成测试通过，六图因权限受阻，退出码2。用户随后已删除这两次失败产物；成功结果见第18节。reports被Git忽略，协议和脚本纳入Git。
 - 下一步：解决本地依赖正常读取/可运行环境问题，补官方OpenCV逐位对照，再以新的输出目录运行固定六图，并核对既有诊断逐图计数和Mask IoU。全部通过后才进入691张离线边界评价。不得由当前合成结果决定采用BLL或启动改进训练。
 - 本轮只新增协议/验证代码并更新README、AGENTS；未训练、未重新推理、未运行全量边界分析、未连接服务器，数据和AP成绩不变。检查后本地提交；Git远程推送由用户完成，本轮不推送，远程状态未核验。
 
@@ -460,11 +460,13 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 ## 18. 2026-10-21：重启后依赖恢复与固定六图验证
 
 - 用户重启Codex后，本轮直接使用原 .local/analysis-libs，pycocotools导入成功；12×15二值掩码RLE编码/解码逐像素一致，面积56核验通过。没有重新安装依赖、复制包、修改ACL或另行申请权限。之前的访问阻碍目前已解除；只能确认重启前失败、重启后成功，不能据此断言某条ACL被清除或确定内部故障机制，也不保证未来会话永久有效。
-- 运行 scripts/validate-uiis-boundary.py --output reports/uiis-boundary-pilot-v3，退出码0，合成测试与固定前六图均通过。输入标注/预测哈希、各图匹配/漏检/预测/crowd忽略计数与既有诊断一致，逐配对Mask IoU与pycocotools一致。
+- 运行 scripts/validate-uiis-boundary.py 完成六图验证，退出码0（成功目录现为 reports/uiis-boundary-pilot），合成测试与固定前六图均通过。输入标注/预测哈希、各图匹配/漏检/预测/crowd忽略计数与既有诊断一致，逐配对Mask IoU与pycocotools一致。
 - 六图合计21个普通GT、27个score≥0.5预测；12对匹配、9个未匹配GT、15个未匹配且未忽略的预测，crowd忽略0。12对匹配实例平均Boundary IoU=0.614079。这是固定六图中匹配实例的条件均值，不是Boundary AP，也不含漏检/误报的分数惩罚，不能外推全量或据此决定BLL有效。
-- [完整验证记录](reports/uiis-boundary-pilot-v3/validation.json)含逐实例结果、输入及脚本哈希、环境和基础提交；v1/v2失败记录保留，不覆盖。结果被Git忽略；本轮README保留摘要。
+- [完整验证记录](reports/uiis-boundary-pilot/validation.json)含逐实例结果、输入及脚本哈希、环境和基础提交；两次失败产物已由用户删除。结果被Git忽略；本轮README保留摘要。
 - 下一步仍需官方OpenCV边界提取实现的逐位运行对照；该项未完成，因此未进入691张全量边界评价或P3模块定案。本轮没有训练、推理或连接服务器。文档检查后本地提交，远程推送由用户完成。
 
-## 19. 2026-10-21：结果目录清理请求未执行
+## 19. 2026-10-21：结果目录清理（用户手动完成）
 
-用户要求删除 uiis-boundary-pilot-v1、uiis-boundary-pilot-v2，并重命名成功目录；计划将 uiis-boundary-pilot-v3 改名为 uiis-boundary-pilot。删除/移动命令在启动前被执行策略拒绝：需要sandbox_approval，但本会话该审批类别被禁用。通过request_permissions取得四个目标目录的写权限后重试，仍被同一策略拒绝。没有删除、移动或改写任何验证结果，文档引用和脚本默认路径暂未调整，避免声称清理已完成。需用户在本机终端完成清理，或在允许该操作审批的会话中继续；远程推送仍由用户负责。
+用户要求删除 uiis-boundary-pilot-v1、uiis-boundary-pilot-v2，并重命名成功目录；计划将 uiis-boundary-pilot-v3 改名为 uiis-boundary-pilot。删除/移动命令在启动前被执行策略拒绝：需要sandbox_approval，但本会话该审批类别被禁用。通过request_permissions取得四个目标目录的写权限后重试，仍被同一策略拒绝。没有删除、移动或改写任何验证结果，文档引用和脚本默认路径暂未调整，避免声称清理已完成。以上为当时失败记录，后续用户已手动完成，见下方核验；远程推送仍由用户负责。
+
+后续核验：用户已删除v1、v2并将v3重命名为 reports/uiis-boundary-pilot。本轮确认旧目录均不存在、新目录validation.json可读，合成与六图passed均为true，12对匹配实例和均值与之前记录一致。同步更新文档引用及脚本默认输出路径，保留拒绝覆盖机制；未重跑实验、未改写结果JSON。结果中的script_sha256保留实际运行时版本，不因本轮默认目录调整而更新。检查后本地提交，远程推送由用户完成。
