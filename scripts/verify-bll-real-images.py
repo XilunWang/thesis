@@ -21,7 +21,7 @@ def sha(path):
     return h.hexdigest()
 
 
-def verify(result, deterministic_cudnn):
+def verify(result, deterministic_cudnn, numerical_stage=None, protocol_path=None):
     import numpy as np
     import torch
     import torch.nn.functional as F
@@ -57,6 +57,24 @@ def verify(result, deterministic_cudnn):
                   torch=torch.__version__, mmdet=mmdet.__version__, checkpoint_sha256=expected,
                   train_annotation_sha256=sha(ROOT/'data/UIIS/annotations/train.json'),
                   gradient_tolerance=dict(atol=1e-6, rtol=1e-5), images=[], batches=[])
+    protocol = None
+    if numerical_stage:
+        assert deterministic_cudnn, 'Numerical protocol fixes deterministic cuDNN'
+        result['numerical_stage'] = numerical_stage
+        result['gradient_tolerance'] = 'frozen per-parameter normalized max and L2 thresholds'
+        if numerical_stage == 'calibrate':
+            if protocol_path.exists():
+                raise FileExistsError(protocol_path)
+            protocol = dict(rule='max(5 * max of four original-repeat discrepancies, 32 * FP32 eps); cap 1e-4',
+                factor=5, floor=32*torch.finfo(torch.float32).eps, cap=1e-4,
+                checkpoint_sha256=expected, train_annotation_sha256=result['train_annotation_sha256'],
+                torch=torch.__version__, batches=[])
+        else:
+            protocol = json.loads(protocol_path.read_text())
+            assert protocol['checkpoint_sha256'] == expected
+            assert protocol['train_annotation_sha256'] == result['train_annotation_sha256']
+            assert protocol['torch'] == torch.__version__
+            result['protocol_sha256'] = sha(protocol_path)
     padding_cfg = copy.deepcopy(cfg.train_dataloader.dataset)
     for transform in padding_cfg.pipeline:
         if transform.type == 'RandomResize':
@@ -170,17 +188,80 @@ def verify(result, deterministic_cudnn):
         return dict(passed=not failures, max_absolute_gradient_difference=max(errors.values()),
                     outside_tolerance=failures)
 
+    def normalized(a, b):
+        assert a['gradients'].keys() == b['gradients'].keys()
+        metrics = {}
+        for n, g in a['gradients'].items():
+            delta = (g-b['gradients'][n]).double()
+            metrics[n] = dict(max=float(delta.abs().max()/g.abs().max().double().clamp_min(1e-12)),
+                             l2=float(delta.norm()/g.double().norm().clamp_min(1e-12)))
+        return metrics
+
+    def frozen_compare(a,b,limits):
+        exact = compare(a,b)  # Still asserts exact outputs/losses/inputs/RNG.
+        metrics = normalized(a,b)
+        failures = [n for n,row in metrics.items() if any(row[k]>limits[n][k] for k in ['max','l2'])]
+        return dict(passed=not failures, outside_tolerance=failures,
+                    legacy_elementwise_check=exact, metrics=metrics)
+
     try:
         for offset in [0,2,4]:
             print('BATCH_START', offset//2, flush=True)
             batch = pseudo_collate(packed[offset:offset+2])
             baseline = run(original, batch, 0, 20261100+offset)
+            if numerical_stage == 'calibrate':
+                repeats = []
+                for _ in range(4):
+                    repeated = run(original,batch,0,20261100+offset)
+                    compare(baseline,repeated)
+                    repeats.append(normalized(baseline,repeated))
+                    del repeated
+                limits = {n:{k:max(protocol['floor'],protocol['factor']*max(r[n][k] for r in repeats))
+                             for k in ['max','l2']} for n in baseline['gradients']}
+                assert all(v<=protocol['cap'] for row in limits.values() for v in row.values()), 'Noise exceeds predeclared cap'
+                protocol['batches'].append(dict(ids=[r['id'] for r in baseline['preprocessing']],
+                    input_sha256=baseline['input_sha256'], limits=limits))
+                result['batches'].append(dict(repeats=repeats, threshold_max=max(v for row in limits.values() for v in row.values())))
+                print('CALIBRATION_DONE',offset//2,flush=True)
+                del baseline
+                continue
             repeat = run(original, batch, 0, 20261100+offset)
-            repeat_check = compare(baseline, repeat)
+            if numerical_stage == 'validate':
+                frozen = protocol['batches'][offset//2]
+                assert frozen['input_sha256'] == baseline['input_sha256']
+                limits = frozen['limits']
+                repeat_check = frozen_compare(baseline,repeat,limits)
+            else:
+                repeat_check = compare(baseline, repeat)
             del repeat
             off = run(candidate, batch, 0, 20261100+offset)
-            off_check = compare(baseline, off)
+            off_check = (frozen_compare(baseline,off,limits) if numerical_stage else compare(baseline,off))
             del off
+            extra_checks = []
+            negative = None
+            if numerical_stage == 'validate':
+                for tested in [original,candidate]:
+                    extra = run(tested,batch,0,20261100+offset)
+                    extra_checks.append(frozen_compare(baseline,extra,limits))
+                    del extra
+                # Inject gradients only, preserving exact losses/forward outputs.
+                # Must detect both a 1% scale error and a sparse 0.1%-of-peak error.
+                negative = dict(nonzero_tensors=0, scale_detected=0, sparse_detected=0)
+                for n,g in baseline['gradients'].items():
+                    peak = float(g.abs().max())
+                    if peak == 0:
+                        continue
+                    negative['nonzero_tensors'] += 1
+                    changed = g * 1.01
+                    delta = (changed-g).double()
+                    scale_metrics = dict(max=float(delta.abs().max()/peak),l2=float(delta.norm()/g.double().norm()))
+                    negative['scale_detected'] += int(any(scale_metrics[k]>limits[n][k] for k in ['max','l2']))
+                    changed = g.clone()
+                    changed.reshape(-1)[int(g.abs().reshape(-1).argmax())] += peak*0.001
+                    sparse_max = float((changed-g).abs().max())/peak
+                    negative['sparse_detected'] += int(sparse_max>limits[n]['max'])
+                assert negative['nonzero_tensors'] > 0
+                assert negative['scale_detected'] == negative['sparse_detected'] == negative['nonzero_tensors']
             on = run(candidate, batch, 1, 20261100+offset)
             assert set(on['losses']) == set(baseline['losses']) | {'loss_bll'}
             assert all(on['losses'][k] == v for k,v in baseline['losses'].items())
@@ -196,6 +277,7 @@ def verify(result, deterministic_cudnn):
                 outputs=on['outputs'], original_repeat=repeat_check, disabled=off_check,
                 losses=on['losses'], audit=on['audit'],
                 gradient_tensor_count=len(on['gradients']), parameters_unchanged=True,
+                extra_checks=extra_checks, negative_controls=negative,
                 measurements={k:dict(seconds=v['seconds'], peak_allocated_bytes=v['peak_allocated_bytes'])
                               for k,v in [('baseline',baseline),('enabled',on)]}))
             print('BATCH_DONE', offset//2, 'loss_bll', on['losses']['loss_bll'], flush=True)
@@ -203,7 +285,17 @@ def verify(result, deterministic_cudnn):
     finally:
         adapter.query_boundary_loss = original_helper
     assert sha(checkpoint) == expected
+    if numerical_stage == 'calibrate':
+        protocol['images'] = result['images']
+        protocol['script_sha256'] = sha(__file__)
+        protocol_path.parent.mkdir(parents=True,exist_ok=True)
+        with protocol_path.open('x',encoding='utf-8') as f:
+            json.dump(protocol,f,indent=2)
+        result.update(passed=True,protocol_sha256=sha(protocol_path))
+        return
     result['passed'] = all(b['original_repeat']['passed'] and b['disabled']['passed'] for b in result['batches'])
+    if numerical_stage:
+        result['passed'] &= all(c['passed'] for b in result['batches'] for c in b['extra_checks'])
     result['limitations'] = ['four unique images/six views, no AP or generalization conclusion',
         'third batch forces resize ratio 0.503 for padding coverage; not an E0 training-strategy change',
         'no optimizer, no full-model checkpoint restore test, no AMP/DDP',
@@ -216,6 +308,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, default=ROOT/'reports/bll-real-images/validation.json')
     parser.add_argument('--deterministic-cudnn', action='store_true')
+    parser.add_argument('--numerical-stage', choices=['calibrate','validate'])
+    parser.add_argument('--protocol',type=Path,default=ROOT/'reports/bll-numerical-protocol/frozen.json')
     args = parser.parse_args()
     output = args.output
     if output.exists():
@@ -223,7 +317,7 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     result = dict(passed=False)
     try:
-        verify(result, args.deterministic_cudnn)
+        verify(result, args.deterministic_cudnn, args.numerical_stage, args.protocol)
     except Exception:
         result['error'] = traceback.format_exc()
         raise
