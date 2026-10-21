@@ -1,11 +1,11 @@
 # P2 边界评价协议 v1
 
-登记日期：2026-10-21。状态：小规模验证协议；不是已完成的全量边界评价。研究问题是已检出实例的轮廓质量，不预设边界是主要误差或 BLL 有效。
+登记日期：2026-10-21。状态：协议、合成/六图验证和官方实现运行对照均已通过（README第20节）；不是已完成的全量边界评价。研究问题是已检出实例的轮廓质量，不预设边界是主要误差或 BLL 有效。
 
 ## 来源与版本
 
 - [Boundary IoU，CVPR 2021，arXiv v1](https://arxiv.org/html/2103.16562v1)，第5、6节：分别考察掩码内部边界带的交并比，并用 min(Mask IoU, Boundary IoU) 构成实例评价的匹配质量。小物体可能整体落入边界带，因此两种 IoU 可以相同。
-- 官方实现固定到 [37d25586a677b043ed585f10e5c42d4e80176ea9](https://github.com/bowenc0221/boundary-iou-api/commit/37d25586a677b043ed585f10e5c42d4e80176ea9)。本轮浏览核对 master 的 [boundary_utils.py](https://github.com/bowenc0221/boundary-iou-api/blob/37d25586a677b043ed585f10e5c42d4e80176ea9/boundary_iou/utils/boundary_utils.py)、[cocoeval.py](https://github.com/bowenc0221/boundary-iou-api/blob/37d25586a677b043ed585f10e5c42d4e80176ea9/boundary_iou/coco_instance_api/cocoeval.py) 及提交历史；尚未下载并运行官方依赖环境。代码级运行一致性必须另验，不能用文献核对代替。
+- 官方实现固定到 [37d25586a677b043ed585f10e5c42d4e80176ea9](https://github.com/bowenc0221/boundary-iou-api/commit/37d25586a677b043ed585f10e5c42d4e80176ea9)。本轮浏览核对 master 的 [boundary_utils.py](https://github.com/bowenc0221/boundary-iou-api/blob/37d25586a677b043ed585f10e5c42d4e80176ea9/boundary_iou/utils/boundary_utils.py)、[cocoeval.py](https://github.com/bowenc0221/boundary-iou-api/blob/37d25586a677b043ed585f10e5c42d4e80176ea9/boundary_iou/coco_instance_api/cocoeval.py) 及提交历史；后续已下载该固定提交原始函数并完成OpenCV运行对照，详见文末入口及README第20节。
 
 ## 固定输入和范围
 
@@ -36,7 +36,7 @@
 ## 验收与执行
 
 1. 合成案例：相同、平移、不相交、一空/双空、全图前景、细线、非法输入；检查对称性、手算面积和独立慢速窗口判定。
-2. 官方 OpenCV 腐蚀逐位比较通过后，才认为边界提取运行一致性充分验证；当前尚未运行。
+2. 官方 OpenCV 腐蚀逐位比较通过后，才认为边界提取运行一致性充分验证；2026-10-21已通过，详见reference-comparison.json。
 3. 六图通过官方解码、既有计数对齐及 Mask IoU 对齐，并检查逐实例输出；之后才能进入全量离线分析。
 
 从项目根目录运行（Python 环境含 numpy、Pillow、pycocotools）：
@@ -47,3 +47,17 @@ python scripts/validate-uiis-boundary.py
 ```
 
 默认结果目录 `reports/uiis-boundary-pilot/validation.json`，已存在则拒绝覆盖；如需重验，通过 `--output` 显式指定新的独立目录。JSON记录源码哈希、基础提交、运行环境、输入哈希（六图成功时）和失败信息。依赖不可读退出码2，不能当作整体验收通过。结果目录被Git忽略，需独立保管；协议和脚本随本地提交保留。
+
+## 官方实现运行对照入口
+
+脚本 `scripts/verify-boundary-reference.py` 直接加载固定提交的官方 `boundary_utils.py`，先校验SHA256为 `a495cc15fdbded38681edef30b29c62014e81e864f0e68ca6062ce42db51fd9c`。参考源码放在 `work/boundary-reference/boundary_utils.py`（本地临时材料，不纳入Git）；下载地址固定为：
+https://raw.githubusercontent.com/bowenc0221/boundary-iou-api/37d25586a677b043ed585f10e5c42d4e80176ea9/boundary_iou/utils/boundary_utils.py
+
+依赖：原numpy/Pillow/pycocotools，加本地 `opencv-python-headless==4.13.0.92`（Python≥3.9要求numpy≥2，与本地2.3.5匹配）。不修改服务器训练环境。通过下列命令运行，默认输出同一成功目录中的 `reference-comparison.json`，已有报告则拒绝覆盖；原 `validation.json` 不改写。
+
+```powershell
+$env:PYTHONPATH = Join-Path (Get-Location) '.local/analysis-libs'
+python scripts/verify-boundary-reference.py
+```
+
+检查包括6种画布尺寸、6种掩码结构、3种带宽的108次逐像素对照，以及固定六图中全部标注与score≥0.5预测掩码。0.005/0.12仅用于实现边界情况测试，不作为UIIS带宽试参；真实图固定0.02。12对已匹配实例的Boundary IoU由官方边界掩码和pycocotools RLE交并比独立计算，容差1e-12。先重算既有六图诊断并要求与保存JSON一致，验证期间检查保存JSON哈希未变化。最终是否通过以报告passed和README最新记录为准，不以脚本存在作为验收通过。
