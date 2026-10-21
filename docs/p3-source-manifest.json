@@ -1,0 +1,61 @@
+[
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "f1acaafd4a2f3bbdbec20726f475f429d6bb95c5",
+    "path": "README.md",
+    "local_path": "work/p3-reference/WaterMask-f1acaafd4a2f3bbdbec20726f475f429d6bb95c5/README.md",
+    "sha256": "A129CD3E0AEA0A7172E018FE96BFDAA5DDABEF4132EE09CBEC0A50DC155E6F1F"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "f1acaafd4a2f3bbdbec20726f475f429d6bb95c5",
+    "path": "project/WaterMask/watermask/water_mask_head.py",
+    "local_path": "work/p3-reference/WaterMask-f1acaafd4a2f3bbdbec20726f475f429d6bb95c5/project/WaterMask/watermask/water_mask_head.py",
+    "sha256": "51A59D3E91554738584D0AD2165F030EF8FF646BD351F32CE2625E7C4E57918F"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "f1acaafd4a2f3bbdbec20726f475f429d6bb95c5",
+    "path": "project/WaterMask/watermask/water_roi_head.py",
+    "local_path": "work/p3-reference/WaterMask-f1acaafd4a2f3bbdbec20726f475f429d6bb95c5/project/WaterMask/watermask/water_roi_head.py",
+    "sha256": "1C27B519DE15522698AD339A15274B73DA7991697DBD9FE0A7AA27734C170535"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "f1acaafd4a2f3bbdbec20726f475f429d6bb95c5",
+    "path": "project/WaterMask/watermask/cross_entropy_loss.py",
+    "local_path": "work/p3-reference/WaterMask-f1acaafd4a2f3bbdbec20726f475f429d6bb95c5/project/WaterMask/watermask/cross_entropy_loss.py",
+    "sha256": "13E619A44444849477A583C63C18E8A4B1468AF91303CC931EA2A124794CBC17"
+  },
+  {
+    "repository": "LiamLian0727/WaterMask",
+    "revision": "f1acaafd4a2f3bbdbec20726f475f429d6bb95c5",
+    "path": "project/WaterMask/configs/watermask_resnet101_2x_uiis.py",
+    "local_path": "work/p3-reference/WaterMask-f1acaafd4a2f3bbdbec20726f475f429d6bb95c5/project/WaterMask/configs/watermask_resnet101_2x_uiis.py",
+    "sha256": "8CCEE2B4F046D8C4C692CDC05A491F84F4A4CF7F1D52E261D2FD7B9FAA80CD69"
+  },
+  {
+    "repository": "open-mmlab/mmdetection",
+    "revision": "v3.3.0",
+    "resolved_tag": "44ebd17b145c2372c4b700bfb9cb20dbd28ab64a",
+    "path": "mmdet/models/dense_heads/mask2former_head.py",
+    "local_path": "work/p3-reference/mmdet-3.3.0/mask2former_head.py",
+    "sha256": "D0895234AEDC0D3C00A02A2C776BE322A4CFAFB3510FCB4980C076384CBF0C9B"
+  },
+  {
+    "repository": "open-mmlab/mmdetection",
+    "revision": "v3.3.0",
+    "resolved_tag": "44ebd17b145c2372c4b700bfb9cb20dbd28ab64a",
+    "path": "mmdet/models/dense_heads/maskformer_head.py",
+    "local_path": "work/p3-reference/mmdet-3.3.0/maskformer_head.py",
+    "sha256": "CE1E597698B1B73F74FA41C5F88BE1B999E9E1833D404B074DEDD2884E3FFC02"
+  },
+  {
+    "repository": "open-mmlab/mmdetection",
+    "revision": "v3.3.0",
+    "resolved_tag": "44ebd17b145c2372c4b700bfb9cb20dbd28ab64a",
+    "path": "mmdet/models/layers/msdeformattn_pixel_decoder.py",
+    "local_path": "work/p3-reference/mmdet-3.3.0/msdeformattn_pixel_decoder.py",
+    "sha256": "029C4CD38210624EA8145D672497912016CFC9AE5540A888AA20F6B202DEDED7"
+  }
+]
