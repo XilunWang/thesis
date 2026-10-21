@@ -464,3 +464,7 @@ cat reports/uiis-baseline-36e-evaluation/exit-code.txt
 - 六图合计21个普通GT、27个score≥0.5预测；12对匹配、9个未匹配GT、15个未匹配且未忽略的预测，crowd忽略0。12对匹配实例平均Boundary IoU=0.614079。这是固定六图中匹配实例的条件均值，不是Boundary AP，也不含漏检/误报的分数惩罚，不能外推全量或据此决定BLL有效。
 - [完整验证记录](reports/uiis-boundary-pilot-v3/validation.json)含逐实例结果、输入及脚本哈希、环境和基础提交；v1/v2失败记录保留，不覆盖。结果被Git忽略；本轮README保留摘要。
 - 下一步仍需官方OpenCV边界提取实现的逐位运行对照；该项未完成，因此未进入691张全量边界评价或P3模块定案。本轮没有训练、推理或连接服务器。文档检查后本地提交，远程推送由用户完成。
+
+## 19. 2026-10-21：结果目录清理请求未执行
+
+用户要求删除 uiis-boundary-pilot-v1、uiis-boundary-pilot-v2，并重命名成功目录；计划将 uiis-boundary-pilot-v3 改名为 uiis-boundary-pilot。删除/移动命令在启动前被执行策略拒绝：需要sandbox_approval，但本会话该审批类别被禁用。通过request_permissions取得四个目标目录的写权限后重试，仍被同一策略拒绝。没有删除、移动或改写任何验证结果，文档引用和脚本默认路径暂未调整，避免声称清理已完成。需用户在本机终端完成清理，或在允许该操作审批的会话中继续；远程推送仍由用户负责。
