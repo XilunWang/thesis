@@ -6,7 +6,3 @@ __pycache__/
 *.pyc
 .venv/
 reports/
-
-presentations/.build/
-presentations/templates/
-presentations/output/
