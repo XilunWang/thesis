@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 
-def verify(device):
+def verify(device, gradient_atol=0.0, gradient_rtol=0.0):
     import mmdet
     import torch
     from mmengine.config import Config
@@ -77,13 +77,30 @@ def verify(device):
     def equal(a, b, key):
         assert a[key].keys() == b[key].keys(), key
         for name in a[key]:
-            torch.testing.assert_close(a[key][name], b[key][name], rtol=0, atol=0, msg=name)
+            torch.testing.assert_close(a[key][name], b[key][name],
+                rtol=gradient_rtol if key == 'gradients' else 0,
+                atol=gradient_atol if key == 'gradients' else 0, msg=name)
 
     baseline = run(original)
+    repeated = run(original)
     candidate.bll_loss_weight = 0
     disabled = run(candidate)
     equal(baseline, disabled, 'losses')
-    equal(baseline, disabled, 'gradients')
+    def gradient_difference(a, b):
+        assert a['gradients'].keys() == b['gradients'].keys()
+        rows = {n: float((g-b['gradients'][n]).abs().max())
+                for n, g in a['gradients'].items()}
+        return dict(nonidentical=sum(v != 0 for v in rows.values()),
+                    maximum=max(rows.values()), per_parameter=rows)
+    diagnostics = dict(original_repeat=gradient_difference(baseline, repeated),
+                       disabled_comparison=gradient_difference(baseline, disabled))
+    try:
+        equal(baseline, repeated, 'losses')
+        equal(baseline, repeated, 'gradients')
+        equal(baseline, disabled, 'gradients')
+    except AssertionError as error:
+        error.diagnostics = diagnostics
+        raise
     assert len(baseline['outputs']) == len(disabled['outputs'])
     for a, b in zip(baseline['outputs'], disabled['outputs']):
         torch.testing.assert_close(a, b, rtol=0, atol=0)
@@ -109,7 +126,9 @@ def verify(device):
     equal(enabled, restored, 'gradients')
     return dict(passed=True, scope='real head, synthetic features/GT, no backbone or data pipeline',
         mmdet=mmdet.__version__, torch=torch.__version__, device=device,
-        checks=['weight=0 exact output/loss/parameter-gradient/RNG equality',
+        gradient_tolerance=dict(atol=gradient_atol, rtol=gradient_rtol),
+        gradient_diagnostics=diagnostics,
+        checks=['weight=0 exact output/loss/RNG equality; gradients at declared tolerance',
                 'weight=1 original losses/RNG unchanged, finite changed gradients',
                 'state_dict in-memory roundtrip loss/gradient equality'],
         loss_bll=enabled['losses']['loss_bll'].item(),
@@ -121,16 +140,23 @@ def verify(device):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--device', default='cuda:0')
+    parser.add_argument('--gradient-atol', type=float, default=0.0)
+    parser.add_argument('--gradient-rtol', type=float, default=0.0)
     parser.add_argument('--output', type=Path, default=ROOT/'reports/bll-head-framework/validation.json')
     args = parser.parse_args()
+    import math
+    if any(not math.isfinite(v) or v < 0 for v in [args.gradient_atol, args.gradient_rtol]):
+        parser.error('Gradient tolerances must be finite and nonnegative')
     if args.output.exists():
         raise FileExistsError(args.output)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     result = dict(passed=False)
     try:
-        result = verify(args.device)
-    except Exception:
+        result = verify(args.device, args.gradient_atol, args.gradient_rtol)
+    except Exception as error:
         result['error'] = traceback.format_exc()
+        if hasattr(error, 'diagnostics'):
+            result['diagnostics'] = error.diagnostics
         raise
     finally:
         files = ['scripts/bll_mask2former_head.py', 'scripts/query_bll.py',
