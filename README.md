@@ -756,3 +756,7 @@ reports/uiis-bll-data-audit的summary、findings、逐图images.jsonl及replay/f
 ### 2026-10-22 22:29续训状态检查（北京时间）
 
 服务器监督PID1086及训练PID1087存活，最新检查时第2轮300/1969步（最近记录22:29:21）；第2轮尚未完成，last_checkpoint仍epoch_1属正常。训练日志未发现Traceback/OOM/非有限损失或参数/BLL目标丢失/连续空选区停止信息，已记录loss及grad_norm有限、BLL诊断vanished均0。最新总loss26.9314、BLL0.7110；GPU即时占用17146MiB/32768MiB、温度47°C，利用率60%为单次快照。日志ETA约14小时41分，估计10月23日13:10左右完成训练，建议预留到13–14时，之后自动691图评估。该时间为早期估计，非完成承诺。进度快照reports/e1-resume-35epochs/progress-2229.log；仅只读查看，未改参数/重启训练。错误关键字搜索无匹配导致grep退出1，不是训练进程失败。
+
+### 2026-10-23 00:45续训检查（北京时间）
+
+第7轮1400/1969步，前6轮已完成，last_checkpoint为epoch_6。监督/训练PID1086/1087存活，续训约2小时20分；全量当前日志扫描无Traceback/OOM/BLL保护触发等错误，所有已记录loss与grad_norm有限、BLL诊断vanished均0。最新总loss23.4841、BLL0.6883；GPU单次快照21354/32768MiB、47°C，磁盘剩34GiB。日志ETA11:56:45，估计今日12:45–13:30完成训练后自动评估，时间随速度波动。尚无最终评估结果，不以loss推断AP收益。快照和检查统计在reports/e1-resume-35epochs/progress-20261023-0045.log及health-20261023-0045.json。本次只读检查，未调整参数、重启或停止训练。
