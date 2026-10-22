@@ -88,3 +88,7 @@ block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留�
 ## E1首轮评估与暂停（2026-10-22，第44节）
 
 用户明确暂停后续35轮，重新开机仅授权epoch1的691图评估，已完成Mask AP21.7/AP50 34.1/AP75 23.3。没有E0同轮次对照，不判断BLL收益；记录提前查看测试集的协议变更。不得自动恢复训练，固定epoch36正式对照仍保留；详见docs/e1-epoch1-evaluation.md。Git用户推送。
+
+## 当前E1续训授权（2026-10-22，第45节，覆盖此前暂停）
+
+用户明确授权恢复后续35轮并完成后评估。预检查通过，22:25北京时间启动后台监督PID1086/训练PID1087，从epoch1/iter1969恢复至36/70884，训练参数及核心源码不变。监督scripts/run-e1-resume-and-evaluate.py成功后自动调用evaluate-e1-final.py做691图COCO评估，失败不重试。查reports/e1-resume-35epochs的training-console.log/process-result.json，不重复启动、不修改运行中核心源码；不重训E0。最终结果未出，后续取回权重/预测/日志、更新README并本地提交；Git用户推送。此前暂停为历史状态，当前授权不包括其他模块/调参训练。

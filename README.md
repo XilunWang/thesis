@@ -6,7 +6,7 @@
 
 **Mask2Former-R50 在 UIIS 上的正式基线训练及评估已完成：36 轮、70884 次迭代，691 张测试图，mask AP 32.6 / AP50 47.6 / AP75 35.3。BLL候选head已通过服务器真实框架的合成特征前后向检查（CPU精确、GPU数值容差），已完成两组各20步技术短试跑及BLL正式第1轮并停止验收，完整36轮及改进评估尚未完成；DSGAT、MFRM未实现，未复现 WaterMask，也未开展第二研究点。**
 
-当前具体入口：第43节及[正式首轮结果](docs/e1-first-epoch-result.md)。E1最后检查通过后完成正式第1轮1969步，用时约24分43秒，epoch_1已保存，自动停止及只读验收通过。没有进入第2轮，保持停止等待后续授权；E0不重训，E2/E3/组合未启动。首轮探索性评估已完成（第44节），无同预算AP收益结论。
+当前具体入口：第45节。用户已授权恢复剩余35轮并完成后评估；恢复前检查通过，2026-10-22 22:25（北京时间）从epoch_1/iter1969启动后台续训，目标epoch36/iter70884，训练成功后自动评估691图。参数不变，尚未完成；E0不重训，E2/E3/组合未启动。首轮探索性Mask AP21.7，无同预算收益结论。
 
 - 已完成：环境/GPU 算子检查、数据下载与审计、短训练及恢复测试、正式入口验证、36 轮训练、最终全量评估、前 6 张图片复核、WaterMask 公布结果和部分配置核对、691张阈值误差诊断、带实例编号的三栏可视化。
 - 未完成：严格 AP 损失归因、正式Boundary AP、模块适配/消融、多随机种子验证、WaterMask同环境复现、第二研究点和论文正文；691张条件配对边界诊断已完成。
@@ -740,3 +740,15 @@ reports/uiis-bll-data-audit的summary、findings、逐图images.jsonl及replay/f
 用户明确暂停后续35轮，随后已重新开机并授权仅评估epoch_1。SERVER_READY，GPU空闲，无训练进程。新增scripts/evaluate-e1-epoch1.py，在独立reports/uiis-e1-bll-epoch1-evaluation目录检查固定权重/标注哈希、E0测试配置及610模型状态精确加载，沿用691图完整COCO评价；不运行训练或恢复优化器。本次显式变更原方案的测试集查看时间，不能用于宣称同预算BLL收益，固定epoch36正式对照仍保留。服务器E0常规checkpoint只保留34/35/36轮，无epoch1同期对照。评估已完成：691/691图、Mask AP21.7/AP50 34.1/AP75 23.3，小/中/大目标AP6.5/17.1/32.0，约174秒；610模型状态精确加载，指标有限，完成标记UIIS_EVALUATION_OK。详见[首轮评估报告](docs/e1-epoch1-evaluation.md)。无原版同期对照，不能判断BLL收益；未评估边界指标。后续35轮继续暂停，远程Git由用户负责。
 
 评估产物及控制台日志已取回本地，bbox/segm预测JSON的SHA256两端一致；结束GPU显存0 MiB、无训练/评估进程，E1目录仅epoch_1。脚本AST及git diff --check通过，未更改训练源码或权重。
+
+## 45. 2026-10-22：授权恢复剩余35轮，成功后自动评估
+
+用户明确解除暂停：恢复前检查通过后从epoch_1接着训练到epoch36，保持参数不变，跑完评估。check-server为SERVER_READY，GPU空闲；scripts/check-e1-resume.py核对4631官方文件、3937/691划分和重复图、COCO/E0/E1权重哈希、第一轮610模型状态及345组优化器状态、1969步/学习率/调度器、完整config与核心源码协议，全部通过。空闲磁盘37505572864字节，环境与首轮一致。报告reports/e1-resume-35epochs/preflight.json已取回。
+
+22:25:10（北京时间）启动独立后台监督进程PID1086，训练子进程PID1087；scripts/train-uiis-bll.py --stage resume --execute-formal，work_dirs/uiis_e1_bll_r50_36e。监督入口scripts/run-e1-resume-and-evaluate.py只执行一次，不重试、不调整参数；日志reports/e1-resume-35epochs/training-console.log，状态training-process.json/process-result.json。SSH或本地应用关闭不终止服务器任务，服务器本身需保持运行。
+
+训练成功完成36轮70884步且恢复验收通过，才运行scripts/evaluate-e1-final.py：核对最终checkpoint模型/优化器有限性、步数、源码及E0一致测试配置，精确加载模型后评估全部691图，输出reports/uiis-e1-bll-36e-evaluation的预测/指标/配置/日志。监督进程写comparison.json对比E0（COCO框架返回值已取三位小数），训练或评估失败保留现场，不自动重训。此链路先完成COCO评价；边界诊断另待后续处理，不称已完成。
+
+本轮未更改训练核心源码、配置、BLL weight1/width3或数据规则；原第一轮提前查看测试集的事实继续披露。新增独立预检查、监督及最终评估脚本，AST/核心源码哈希检查通过，代码同步CODE_SYNC_OK。当前为运行中，尚无最终成绩，不将已排队评估写成完成；结束后需取回最终权重和全部结果并解释收益。本地提交，远程Git由用户负责。
+
+启动后实际验收：22:25:29日志RESUME_STATE_VERIFIED确认轮次/步数/优化器/调度器恢复，BLLGuard已逐项确认610模型状态精确加载；22:26:12进入第2轮50/1969步，总loss29.5121、loss_bll0.7094均有限，BLL诊断vanished=0。该记录仅是启动观察，不表示后续35轮或最终评估已完成。
