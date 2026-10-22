@@ -84,3 +84,7 @@ block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留�
 ## E1正式首轮最终结果（2026-10-22，第43节）
 
 17:30:01正式第1轮完成1969步后自动停止，退出0，用时1482.79秒。只读checkpoint/日志检查passed=true：610模型张量及345组优化器状态有限、steps全1969，LR/调度/协议正确，GT消失保护未触发。没有第2轮、无AP评估；当前无训练进程、GPU显存0、锁释放。保持停止，只有用户另行授权才从epoch_1续训，不重复首轮，不重训E0或启动E2/E3。详情docs/e1-first-epoch-result.md、reports/e1-first-epoch/inspection.json；上文运行中状态已结束。
+
+## E1首轮评估与暂停（2026-10-22，第44节）
+
+用户明确暂停后续35轮，重新开机仅授权epoch1的691图评估，已完成Mask AP21.7/AP50 34.1/AP75 23.3。没有E0同轮次对照，不判断BLL收益；记录提前查看测试集的协议变更。不得自动恢复训练，固定epoch36正式对照仍保留；详见docs/e1-epoch1-evaluation.md。Git用户推送。
