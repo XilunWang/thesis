@@ -10,7 +10,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from query_bll import query_boundary_loss
+from query_bll import query_boundary_loss, build_bll_targets
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,15 +37,15 @@ def run():
     final = torch.randn_like(previous).requires_grad_()
     snapshots = [x.detach().clone() for x in [previous, final, *gt]]
     loss, info = query_boundary_loss(previous, final, gt, matches, valid, loss_weight=1)
-    # Independent stride slicing + count-neighbor oracle + stable NumPy BCE.
+    # Independent NumPy block reduction + count-neighbor oracle + stable NumPy BCE.
     selected = np.zeros(tuple(final.shape), dtype=bool)
     targets = np.zeros(tuple(final.shape), dtype=np.float32)
     for i, (qi, gi) in enumerate(matches):
-        gh, gw = valid[i][0]//4, valid[i][1]//4
+        gh, gw = (valid[i][0]+3)//4, (valid[i][1]+3)//4
         keep = np.zeros((12, 16), dtype=bool)
         keep[:gh, :gw] = True
         for query, target in zip(qi.tolist(), gi.tolist()):
-            t = gt[i][target, ::4, ::4].numpy()*keep
+            t = gt[i][target].numpy().reshape(12,4,16,4).max(axis=(1,3))*keep
             p = (previous[i, query].detach().numpy() >= 0)*keep
             selected[i, query] = (oracle.count_boundary(t[None])[0] |
                                   oracle.count_boundary(p[None])[0]) & keep
@@ -87,11 +87,11 @@ def run():
     checks.append('wrong_association_detectable')
 
     p2, f2 = previous.detach().clone(), final.detach().clone()
-    p2[1, :, 9:, :] = 99; p2[1, :, :, 13:] = -99
-    f2[1, :, 9:, :] = -99; f2[1, :, :, 13:] = 99
+    p2[1, :, 10:, :] = 99; p2[1, :, :, 14:] = -99
+    f2[1, :, 10:, :] = -99; f2[1, :, :, 14:] = 99
     padded, _ = query_boundary_loss(p2, f2, gt, matches, valid, loss_weight=1)
     torch.testing.assert_close(padded, loss)
-    checks.append('padding_perturbation_invariant_including_partial_cells')
+    checks.append('pure_padding_perturbation_invariant')
 
     # Disabled helper makes no assignments/targets, consumes no RNG, adds zero.
     x = final.detach().clone().requires_grad_()
@@ -147,7 +147,7 @@ def run():
                 limitations=['Standalone helper only; no actual assignment or MMDetection head executed',
                              'weight=0 tested with a synthetic base loss, not original head BCE/Dice',
                              'FP32 single-process global normalization; distributed/AMP unverified',
-                             'Native-grid nearest GT resizing can lose thin objects; width=3 is a probe setting, not E1 selection'])
+                             'Block occupancy preserves foreground existence but can thicken or merge within-instance details'])
 
 
 def main():
@@ -166,9 +166,12 @@ def main():
     finally:
         files = ['scripts/query_bll.py','scripts/validate-query-bll.py',
                  'scripts/bll_core.py','scripts/validate-bll.py']
+        git = subprocess.run(['git','rev-parse','HEAD'], cwd=ROOT, text=True,
+                             capture_output=True)
         result.update(python=platform.python_version(), torch=torch.__version__, device='cpu',
                       seed=20261021, source_sha256={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in files},
-                      base_commit=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT,text=True).strip())
+                      base_commit=git.stdout.strip() if git.returncode == 0 else None,
+                      git_metadata_available=git.returncode == 0)
         args.output.write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8')
     print(json.dumps({k:result[k] for k in ['passed','check_count','matched','selected_pixels']}))
 

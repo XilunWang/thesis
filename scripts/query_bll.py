@@ -13,6 +13,37 @@ else:
     from bll_core import boundary
 
 
+TARGET_RULE = 'block-occupancy-valid-overlap'
+
+
+@torch.no_grad()
+def build_bll_targets(gt, grid_shape, valid_shape):
+    """Binary occupancy of integer-stride blocks, including partial valid blocks.
+
+    A cell is foreground iff ANY valid source pixel is foreground. This is not
+    point sampling or area coverage: thin objects can occupy a whole grid cell.
+    Pure padding cells stay invalid; padding in the source must be zero.
+    """
+    if gt.ndim != 3 or not torch.all((gt == 0) | (gt == 1)):
+        raise ValueError('Binary [G,Hp,Wp] GT required')
+    hp, wp = gt.shape[-2:]
+    h, w = grid_shape
+    vh, vw = valid_shape
+    if min(h, w) < 1 or hp < h or wp < w or hp % h or wp % w:
+        raise ValueError('Padded GT dimensions must have integer grid stride')
+    if not (isinstance(vh, int) and isinstance(vw, int) and 0 < vh <= hp and 0 < vw <= wp):
+        raise ValueError('Invalid unpadded image shape')
+    if gt[:, vh:, :].any() or gt[:, :, vw:].any():
+        raise ValueError('GT padding must be zero')
+    sh, sw = hp // h, wp // w
+    gh, gw = (vh + sh - 1) // sh, (vw + sw - 1) // sw
+    valid_grid = torch.zeros((h, w), dtype=torch.bool, device=gt.device)
+    valid_grid[:gh, :gw] = True
+    target = (F.max_pool2d(gt[:, None].float(), (sh, sw), (sh, sw))[:, 0]
+              if len(gt) else gt.new_empty((0, h, w), dtype=torch.float32))
+    return target * valid_grid, valid_grid
+
+
 def query_boundary_loss(previous, final, gt_masks, final_matches, valid_shapes,
                         *, loss_weight, boundary_width=3):
     """Return weighted loss and diagnostic counts (CPU/FP32 candidate).
@@ -22,7 +53,7 @@ def query_boundary_loss(previous, final, gt_masks, final_matches, valid_shapes,
     directly from the SAME final-layer assignment used for baseline losses.
     valid_shapes: B resized, unpadded (H,W), with top-left image placement.
     Integer stride and equal previous/final grids are required; partial cells
-    at the valid-image edge are excluded. No input tensor is modified.
+    overlapping the valid image are included. No input tensor is modified.
     """
     if not math.isfinite(loss_weight) or loss_weight < 0:
         raise ValueError('Expected finite nonnegative loss weight')
@@ -65,15 +96,12 @@ def query_boundary_loss(previous, final, gt_masks, final_matches, valid_shapes,
         if gt[:, vh:, :].any() or gt[:, :, vw:].any():
             raise ValueError('GT padding must be zero')
         n = qi.numel()
-        gh, gw = vh // (hp // h), vw // (wp // w)
+        gh, gw = (vh + hp//h - 1) // (hp//h), (vw + wp//w - 1) // (wp//w)
         if n == 0:
             rows.append(dict(matched=0, selected_pixels=0, valid_grid=[gh, gw]))
             continue
         with torch.no_grad():
-            target = F.interpolate(gt[gi, None].float(), size=(h, w), mode='nearest')[:, 0]
-            valid_grid = torch.zeros((h, w), dtype=torch.bool, device=final.device)
-            valid_grid[:gh, :gw] = True
-            target = target * valid_grid
+            target, valid_grid = build_bll_targets(gt[gi], (h, w), (vh, vw))
             prev_binary = (previous[i, qi].detach().sigmoid() >= .5) & valid_grid
             region = (boundary(prev_binary, boundary_width) |
                       boundary(target, boundary_width)) & valid_grid
@@ -85,4 +113,5 @@ def query_boundary_loss(previous, final, gt_masks, final_matches, valid_shapes,
     loss = loss_weight * numerator / max(denominator, 1)
     return loss, dict(disabled=False, matched=sum(r['matched'] for r in rows),
                      selected_pixels=denominator, per_image=rows,
-                     normalization='single-process global selected pixel mean')
+                     normalization='single-process global selected pixel mean',
+                     target_rule=TARGET_RULE)

@@ -24,7 +24,7 @@ def sha(path):
 def verify(result, deterministic_cudnn, numerical_stage=None, protocol_path=None):
     import numpy as np
     import torch
-    import torch.nn.functional as F
+    from scripts.query_bll import build_bll_targets
     import mmdet
     from mmengine.dataset import pseudo_collate
     from mmdet.registry import MODELS, DATASETS
@@ -111,9 +111,8 @@ def verify(result, deterministic_cudnn, numerical_stage=None, protocol_path=None
                 h, w = final.shape[-2:]
                 hp, wp = gt.shape[-2:]
                 assert hp % h == 0 and wp % w == 0
-                gh, gw = vh//(hp//h), vw//(wp//w)
-                small = (F.interpolate(gt[:, None].float(), (h,w), mode='nearest')[:,0]
-                         if len(gt) else gt.new_empty((0,h,w)))
+                gh, gw = (vh+hp//h-1)//(hp//h), (vw+wp//w-1)//(wp//w)
+                small, _ = build_bll_targets(gt, (h,w), (vh,vw))
                 before = gt.flatten(1).sum(1)
                 after = small[:, :gh, :gw].flatten(1).sum(1)
                 lost = ((before > 0) & (after == 0)).nonzero().flatten()

@@ -68,3 +68,7 @@ README第32节为最新状态：SERVER_READY；E0最终权重及协议/配置已
 ## 最新全训练集数据检查（2026-10-21，第40节）
 
 3937张均已扫描；3936张完成网格检查，1张因原随机裁剪/FilterAnnotations返回None（不是坏图）。60张中的183个非空GT在当前BLL网格消失，171个nearest采样丢失、12个边缘有效单元排除。completed=true但passed=false，正式E1未启动，未更新权重/改算法。下一步先修订并验收BLL目标生成，再复核数据及正式协议；不得删图、静默忽略实例或关闭保护直接开训。每图一次增强，不代表所有随机增强；见docs/bll-training-data-audit.md。第39节“全量待做”为历史状态。
+
+## 最新BLL保留修订（2026-10-22，第41节）
+
+block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留、ceil有效半格、纯padding排除；可能使细节变粗，不能称收益已证实。CPU/GPU单像素与独立loss/梯度、原四图六视图冻结数值验收通过；3937张配对复查完成，3936张/22033实例网格检查消失数0，昨日183全部保留，ID976原过滤仍单列。SSH BrokenPipe使初扫14张未完成，失败报告保留，只补查14张并验证合并，最终reports/uiis-bll-occupancy-verified通过。正式方案已修订，未训练/未更新权重，用户明确暂不开正式训练。下一步待授权后最终资源/哈希核验再开首轮，不重训E0，不恢复旧试跑checkpoint；见docs/bll-target-preservation.md。

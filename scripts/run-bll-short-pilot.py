@@ -34,7 +34,7 @@ def write_json(path,value):
 def worker(arm,resume):
     import numpy as np
     import torch
-    import torch.nn.functional as F
+    from scripts.query_bll import build_bll_targets
     from mmengine.dataset import pseudo_collate
     from mmengine.optim import build_optim_wrapper
     from mmdet.registry import MODELS,DATASETS
@@ -141,8 +141,8 @@ def worker(arm,resume):
                 assert hp%h==0 and wp%w==0
                 assert not gt[:,vh:,:].any() and not gt[:,:,vw:].any()
                 gt_counts.append(len(gt))
-                small=F.interpolate(gt[:,None],(h,w),mode='nearest')[:,0] if len(gt) else gt.new_empty((0,h,w))
-                lost=((gt.flatten(1).sum(1)>0)&(small[:,:vh//(hp//h),:vw//(wp//w)].flatten(1).sum(1)==0)).nonzero().flatten().tolist()
+                small,_=build_bll_targets(gt,(h,w),(vh,vw))
+                lost=((gt.flatten(1).sum(1)>0)&(small.flatten(1).sum(1)==0)).nonzero().flatten().tolist()
                 vanished.append(lost)
             selected=helper_diag[-1]['selected_pixels'] if helper_diag else None
             if arm=='B' and sum(gt_counts)>0: empty_streak=empty_streak+1 if selected==0 else 0

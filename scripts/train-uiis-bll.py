@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 import torch
-import torch.nn.functional as F
+from scripts.query_bll import build_bll_targets
 from mmengine.runner import Runner
 from mmdet.utils import register_all_modules
 import scripts.bll_mask2former_head as adapter
@@ -65,8 +65,8 @@ class BLLGuard(TrainingGuard):
                 if not len(gt): continue
                 h,w=final.shape[-2:]; hp,wp=gt.shape[-2:]
                 assert hp%h==0 and wp%w==0
-                small=F.interpolate(gt[:,None].float(),(h,w),mode='nearest')[:,0]
-                lost+=int(((gt.flatten(1).sum(1)>0)&(small[:,:vh//(hp//h),:vw//(wp//w)].flatten(1).sum(1)==0)).sum())
+                small,_=build_bll_targets(gt,(h,w),(vh,vw))
+                lost+=int(((gt.flatten(1).sum(1)>0)&(small.flatten(1).sum(1)==0)).sum())
             if lost: raise RuntimeError(f'BLL_GT_VANISHED: {lost}; stop before update and inspect')
             loss,diag=self.original_helper(previous,final,gts,matches,shapes,**kw)
             self.empty_streak=self.empty_streak+1 if sum(len(g) for g in gts)>0 and diag['selected_pixels']==0 else 0
