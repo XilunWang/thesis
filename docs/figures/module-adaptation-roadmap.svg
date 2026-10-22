@@ -17,7 +17,7 @@
 <text x="285.0" y="341" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#24613c">E1  原版 + BLL</text>
 <text x="285.0" y="380" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">只检验边界监督的作用</text>
 <text x="285.0" y="414" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">相邻 decoder 层，同 query 对应</text>
-<text x="285.0" y="448" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">工程验证完成；正式训练未开始</text>
+<text x="285.0" y="448" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">正式第1轮完成并停止；待续训授权</text>
 <rect x="570" y="310" width="460" height="190" rx="16" fill="#ffffff" stroke="#9caabb" stroke-width="2"/>
 <text x="800.0" y="341" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E2  原版 + MFRM</text>
 <text x="800.0" y="380" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">只检验掩码细化的作用</text>
@@ -66,5 +66,5 @@
 <text x="800.0" y="1229" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">候选 E4a：细化前掩码 + GT 形成选区 → 监督 MFRM 细化后掩码</text>
 <text x="800.0" y="1263" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">E4a 尚未实现；不默认同时叠加两处 BLL，也不新增独立边界预测头</text>
 <text x="800" y="1330" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">统一规则：官方 3937 / 691 划分及重复图保留 · 同源预训练、预算和评价 · 不挑 best</text>
-<text x="800" y="1372" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="25" font-weight="700" fill="#9b4624">本次仅确认路线和更新文档，不启动训练。</text>
+<text x="800" y="1372" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="25" font-weight="700" fill="#9b4624">E1首轮已完成并停止；继续训练需另行授权。</text>
 </svg>

@@ -80,3 +80,7 @@ block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留�
 ## 当前E1正式首轮（2026-10-22，第43节）
 
 用户已授权预检查通过后仅运行正式第1轮，结束停止验收。4631文件/权重/源码/配置/资源核对通过，17:05:18启动work_dirs/uiis_e1_bll_r50_36e，--stage first --execute-formal，监督PID3114，日志reports/e1-first-epoch/console.log。已有入口第1轮1969步保存后自动停止，没有自动resume。当前运行中，勿重复启动或改动训练源码；检查process-result.json/result-first.json及epoch_1后验收，不继续第2轮，Git用户推送。此前“E1未启动”为历史。
+
+## E1正式首轮最终结果（2026-10-22，第43节）
+
+17:30:01正式第1轮完成1969步后自动停止，退出0，用时1482.79秒。只读checkpoint/日志检查passed=true：610模型张量及345组优化器状态有限、steps全1969，LR/调度/协议正确，GT消失保护未触发。没有第2轮、无AP评估；当前无训练进程、GPU显存0、锁释放。保持停止，只有用户另行授权才从epoch_1续训，不重复首轮，不重训E0或启动E2/E3。详情docs/e1-first-epoch-result.md、reports/e1-first-epoch/inspection.json；上文运行中状态已结束。
