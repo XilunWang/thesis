@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1400" viewBox="0 0 1600 1400">
+<rect width="1600" height="1400" fill="#f7f9fc"/>
+<text x="800" y="55" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="46" font-weight="700" fill="#233348">先单模块适配，再组合验证</text>
+<text x="800" y="105" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="24" font-weight="400" fill="#233348">实验路线图 · 箭头表示决策顺序，不表示模型数据流或权重继承</text>
+<rect x="380" y="145" width="840" height="100" rx="16" fill="#e9f1ff" stroke="#6490c9" stroke-width="2"/>
+<text x="800.0" y="176" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E0  原版 Mask2Former-R50</text>
+<text x="800.0" y="215" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">基线已完成：Mask AP 32.6 · 保留既有结果，不重复训练</text>
+<polyline points="800,245 800,275" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="285,275 1315,275" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="285,275 285,310" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="277,298 293,298 285,310" fill="#60748c"/>
+<polyline points="800,275 800,310" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="792,298 808,298 800,310" fill="#60748c"/>
+<polyline points="1315,275 1315,310" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="1307,298 1323,298 1315,310" fill="#60748c"/>
+<rect x="55" y="310" width="460" height="190" rx="16" fill="#eaf7ef" stroke="#409263" stroke-width="2"/>
+<text x="285.0" y="341" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#24613c">E1  原版 + BLL</text>
+<text x="285.0" y="380" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">只检验边界监督的作用</text>
+<text x="285.0" y="414" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">相邻 decoder 层，同 query 对应</text>
+<text x="285.0" y="448" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">工程验证完成；正式训练未开始</text>
+<rect x="570" y="310" width="460" height="190" rx="16" fill="#ffffff" stroke="#9caabb" stroke-width="2"/>
+<text x="800.0" y="341" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E2  原版 + MFRM</text>
+<text x="800.0" y="380" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">只检验掩码细化的作用</text>
+<text x="800.0" y="414" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">不加 BLL / DSGAT</text>
+<text x="800.0" y="448" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">尚未实现；接口与监督待定</text>
+<rect x="1085" y="310" width="460" height="190" rx="16" fill="#ffffff" stroke="#9caabb" stroke-width="2"/>
+<text x="1315.0" y="341" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E3  原版 + DSGAT</text>
+<text x="1315.0" y="380" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">只检验特征增强的作用</text>
+<text x="1315.0" y="414" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">不加 BLL / MFRM</text>
+<text x="1315.0" y="448" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">尚未实现；插入位置待定</text>
+<text x="800" y="531" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">适配优先级：E1 → E2 → E3；三项各自与 E0 比较，不继承前项训练结果</text>
+<polyline points="285,550 285,570" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="800,550 800,570" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="1315,550 1315,570" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="285,570 1315,570" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="800,570 800,605" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="792,593 808,593 800,605" fill="#60748c"/>
+<rect x="310" y="605" width="980" height="100" rx="16" fill="#fff4df" stroke="#d6a244" stroke-width="2"/>
+<text x="800.0" y="636" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#885e15">组合前决策：结果是否支持明确的互补假设？</text>
+<text x="800.0" y="675" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">先完成单模块评估；证据不足则分析或修订，不自动叠加</text>
+<polyline points="800,705 800,730" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="425,730 1175,730" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="425,730 425,765" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="417,753 433,753 425,765" fill="#60748c"/>
+<polyline points="1175,730 1175,765" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="1167,753 1183,753 1175,765" fill="#60748c"/>
+<rect x="95" y="765" width="660" height="155" rx="16" fill="#ffffff" stroke="#9caabb" stroke-width="2"/>
+<text x="425.0" y="796" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E4a  MFRM + BLL（条件候选）</text>
+<text x="425.0" y="835" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">与 E2 比较：细化结果是否受益于 BLL？</text>
+<text x="425.0" y="869" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">重新确定监督位置、尺度、匹配和损失规则</text>
+<rect x="845" y="765" width="660" height="155" rx="16" fill="#ffffff" stroke="#9caabb" stroke-width="2"/>
+<text x="1175.0" y="796" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E4b  DSGAT + 有依据的组合</text>
+<text x="1175.0" y="835" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">与对应不含 DSGAT 的配置比较</text>
+<text x="1175.0" y="869" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">具体组合待登记；不默认三模块全部加入</text>
+<polyline points="425,920 425,945" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="1175,920 1175,945" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="425,945 1175,945" fill="none" stroke="#60748c" stroke-width="3"/>
+<polyline points="800,945 800,980" fill="none" stroke="#60748c" stroke-width="3"/>
+<polygon points="792,968 808,968 800,980" fill="#60748c"/>
+<rect x="270" y="980" width="1060" height="105" rx="16" fill="#ffffff" stroke="#9caabb" stroke-width="2"/>
+<text x="800.0" y="1011" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">E5  去除模块消融    →    E6  配对重复验证</text>
+<text x="800.0" y="1050" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">形成候选后再规划、另定预算与授权；复用已有等价对照</text>
+<rect x="90" y="1125" width="1420" height="165" rx="16" fill="#eef4f8" stroke="#9caabb" stroke-width="2"/>
+<text x="800.0" y="1156" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#233348">BLL 监督位置：独立实验与组合实验要区分</text>
+<text x="800.0" y="1195" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">当前 E1：前一 decoder 层 + GT 形成选区 → 监督最后一层掩码</text>
+<text x="800.0" y="1229" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">候选 E4a：细化前掩码 + GT 形成选区 → 监督 MFRM 细化后掩码</text>
+<text x="800.0" y="1263" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">E4a 尚未实现；不默认同时叠加两处 BLL，也不新增独立边界预测头</text>
+<text x="800" y="1330" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="23" font-weight="400" fill="#233348">统一规则：官方 3937 / 691 划分及重复图保留 · 同源预训练、预算和评价 · 不挑 best</text>
+<text x="800" y="1372" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei, sans-serif" font-size="25" font-weight="700" fill="#9b4624">本次仅确认路线和更新文档，不启动训练。</text>
+</svg>

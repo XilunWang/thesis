@@ -72,3 +72,7 @@ README第32节为最新状态：SERVER_READY；E0最终权重及协议/配置已
 ## 最新BLL保留修订（2026-10-22，第41节）
 
 block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留、ceil有效半格、纯padding排除；可能使细节变粗，不能称收益已证实。CPU/GPU单像素与独立loss/梯度、原四图六视图冻结数值验收通过；3937张配对复查完成，3936张/22033实例网格检查消失数0，昨日183全部保留，ID976原过滤仍单列。SSH BrokenPipe使初扫14张未完成，失败报告保留，只补查14张并验证合并，最终reports/uiis-bll-occupancy-verified通过。正式方案已修订，未训练/未更新权重，用户明确暂不开正式训练。下一步待授权后最终资源/哈希核验再开首轮，不重训E0，不恢复旧试跑checkpoint；见docs/bll-target-preservation.md。
+
+## 最新路线确认（2026-10-22，第42节）
+
+用户确认先单模块适配、再组合验证，本轮只文档/绘图、不训练。E1独立BLL→E2独立MFRM→E3独立DSGAT，各自与E0比较，再按证据决定E4a MFRM+BLL、E4b含DSGAT组合，最后E5/E6。编号不表示checkpoint串行继承。当前BLL监督原decoder最后层；MFRM组合时需重定细化前后监督/尺度/匹配，不默认同时两处BLL。MFRM/DSGAT接口未实现，旧PPT不是固定架构。以docs/module-adaptation-plan.md与README第2节为准；新路线图为docs/figures/module-adaptation-roadmap.png/svg。本轮新文档/图待下次执行前同步服务器；远程Git用户负责。
