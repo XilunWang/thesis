@@ -76,3 +76,7 @@ block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留�
 ## 最新路线确认（2026-10-22，第42节）
 
 用户确认先单模块适配、再组合验证，本轮只文档/绘图、不训练。E1独立BLL→E2独立MFRM→E3独立DSGAT，各自与E0比较，再按证据决定E4a MFRM+BLL、E4b含DSGAT组合，最后E5/E6。编号不表示checkpoint串行继承。当前BLL监督原decoder最后层；MFRM组合时需重定细化前后监督/尺度/匹配，不默认同时两处BLL。MFRM/DSGAT接口未实现，旧PPT不是固定架构。以docs/module-adaptation-plan.md与README第2节为准；新路线图为docs/figures/module-adaptation-roadmap.png/svg。本轮新文档/图待下次执行前同步服务器；远程Git用户负责。
+
+## 当前E1正式首轮（2026-10-22，第43节）
+
+用户已授权预检查通过后仅运行正式第1轮，结束停止验收。4631文件/权重/源码/配置/资源核对通过，17:05:18启动work_dirs/uiis_e1_bll_r50_36e，--stage first --execute-formal，监督PID3114，日志reports/e1-first-epoch/console.log。已有入口第1轮1969步保存后自动停止，没有自动resume。当前运行中，勿重复启动或改动训练源码；检查process-result.json/result-first.json及epoch_1后验收，不继续第2轮，Git用户推送。此前“E1未启动”为历史。
