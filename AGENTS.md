@@ -92,3 +92,7 @@ block-occupancy-valid-overlap已取代nearest/floor：块内任意前景保留�
 ## 当前E1续训授权（2026-10-22，第45节，覆盖此前暂停）
 
 用户明确授权恢复后续35轮并完成后评估。预检查通过，22:25北京时间启动后台监督PID1086/训练PID1087，从epoch1/iter1969恢复至36/70884，训练参数及核心源码不变。监督scripts/run-e1-resume-and-evaluate.py成功后自动调用evaluate-e1-final.py做691图COCO评估，失败不重试。查reports/e1-resume-35epochs的training-console.log/process-result.json，不重复启动、不修改运行中核心源码；不重训E0。最终结果未出，后续取回权重/预测/日志、更新README并本地提交；Git用户推送。此前暂停为历史状态，当前授权不包括其他模块/调参训练。
+
+## 最新E1完成状态（2026-10-23，第46节）
+
+E1已完成36轮70884步及691图固定最终评估，两阶段退出0。Mask AP33.0（E0 32.6，+0.4），AP50 48.2/AP75 36.5；大目标AP下降1.2点，单种子不证明稳定收益。无运行训练，不恢复满预算任务；下一步最终边界对照和退化分析，不自动启动其他训练。以docs/e1-final-result.md和README第46节为准，旧运行中记录属历史。
