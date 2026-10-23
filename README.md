@@ -764,3 +764,7 @@ reports/uiis-bll-data-audit的summary、findings、逐图images.jsonl及replay/f
 ### 2026-10-23 08:49续训检查（北京时间）
 
 第27轮运行中（现场最近记录1050/1969步），前26轮已完成，last_checkpoint为epoch_26；监督/训练进程存活，已续训约10小时24分。完整当前日志扫描无Traceback/OOM/BLL保护触发等错误，已记录loss/grad_norm均有限，BLL诊断vanished均0。GPU即时100%、21354/32768MiB、48°C，磁盘剩33GiB。ETA约3小时50分，预计今日12:40左右结束训练，预留至13时，成功后自动691图评估。检查快照与统计保存在reports/e1-resume-35epochs/progress-20261023-0849.log、health-20261023-0849.json；未改参数或重启训练，尚无最终成绩。
+
+### 2026-10-23 10:17续训检查（北京时间）
+
+训练尚未完成：第31轮250/1969步，前30轮完成；监督/训练PID1086/1087存活，自动最终评估尚未启动。全量当前日志扫描未发现Traceback/OOM/非有限损失参数/BLL保护触发，已记录loss/grad_norm有限，BLL诊断vanished均0。base_lr已按原调度降至1e-5、backbone lr1e-6，不是手动改参。最新总loss15.6875、BLL0.4882；日志ETA2:23:16，预计12:40左右训练结束，再自动评估691图。进度快照及health统计在reports/e1-resume-35epochs/*20261023-1017*。本次只读检查，无重启/调参/提前评估。
