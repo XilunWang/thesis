@@ -768,3 +768,7 @@ reports/uiis-bll-data-audit的summary、findings、逐图images.jsonl及replay/f
 ### 2026-10-23 10:17续训检查（北京时间）
 
 训练尚未完成：第31轮250/1969步，前30轮完成；监督/训练PID1086/1087存活，自动最终评估尚未启动。全量当前日志扫描未发现Traceback/OOM/非有限损失参数/BLL保护触发，已记录loss/grad_norm有限，BLL诊断vanished均0。base_lr已按原调度降至1e-5、backbone lr1e-6，不是手动改参。最新总loss15.6875、BLL0.4882；日志ETA2:23:16，预计12:40左右训练结束，再自动评估691图。进度快照及health统计在reports/e1-resume-35epochs/*20261023-1017*。本次只读检查，无重启/调参/提前评估。
+
+### 2026-10-23 11:58续训检查（北京时间）
+
+最新连接时第35轮200/1969步，前34轮完成；训练仍持续输出，最后两轮尚未结束，最终评估待训练完成。全量当前日志检查无异常标记，已记录loss/grad_norm有限，BLL诊断vanished均0。原调度已降至base_lr1e-6/backbone1e-7，未人工调参。ETA约46分钟，预计12:45左右完成训练后自动评估。首次SSH连接超时，限定15秒连接重试成功，属于本次连接故障，不能据此认定训练中断。快照reports/e1-resume-35epochs/progress-20261023-1158.log。未重启或改变训练。
