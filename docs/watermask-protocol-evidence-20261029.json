@@ -1,0 +1,195 @@
+{
+  "checked_on": "2026-10-29",
+  "repository_revision": "07042d254ffbdbf584ee0a5725e3c5e5e57e27c5",
+  "archive_file_id": "1SlgkcOzYjKku15ldezNRe4O4OsqdprIB",
+  "archive_size": 2152994971,
+  "archive_index": [
+    {
+      "name": "WaterMask/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 0,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/1x/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 40,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/1x/r101/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 83,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/1x/r101/20221012_124330.log",
+      "size": 224033,
+      "compressed": 35460,
+      "offset": 131,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/1x/r101/epoch_12.pth",
+      "size": 533042802,
+      "compressed": 497624467,
+      "offset": 35658,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/1x/r101/water_r101_fpn_1x.py",
+      "size": 8819,
+      "compressed": 2131,
+      "offset": 497660185,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 497662384,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/3x/cr101/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 497662427,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/3x/cr101/20230122_145054.log",
+      "size": 102190,
+      "compressed": 11608,
+      "offset": 497662476,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/cr101/cascade_water_r101_fpn_ms3x.py",
+      "size": 12404,
+      "compressed": 2479,
+      "offset": 497674152,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/cr101/epoch_36.pth",
+      "size": 859022014,
+      "compressed": 800755550,
+      "offset": 497676710,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r101/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 1298432321,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/3x/r101/20230119_151251.log",
+      "size": 95598,
+      "compressed": 13384,
+      "offset": 1298432369,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r101/epoch_36.pth",
+      "size": 534097582,
+      "compressed": 498604917,
+      "offset": 1298445820,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r101/water_r101_fpn_ms3x.py",
+      "size": 9492,
+      "compressed": 2287,
+      "offset": 1797050797,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r50/",
+      "size": 0,
+      "compressed": 0,
+      "offset": 1797053154,
+      "method": 0
+    },
+    {
+      "name": "WaterMask/3x/r50/20230118_104531.log",
+      "size": 267232,
+      "compressed": 48068,
+      "offset": 1797053201,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r50/20230118_153505.log",
+      "size": 254715,
+      "compressed": 45367,
+      "offset": 1797101335,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r50/epoch_36.pth",
+      "size": 381805057,
+      "compressed": 355843577,
+      "offset": 1797146768,
+      "method": 8
+    },
+    {
+      "name": "WaterMask/3x/r50/water_r50_fpn_ms3x.py",
+      "size": 9403,
+      "compressed": 2260,
+      "offset": 2152990404,
+      "method": 8
+    }
+  ],
+  "retrieved_text_files": [
+    {
+      "path": "archive-extracted/WaterMask/1x/r101/20221012_124330.log",
+      "sha256": "91aa1af8870e70d3bc390dd5571bf71ac3de97201307bc9945c744067d251e9a",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/1x/r101/water_r101_fpn_1x.py",
+      "sha256": "3189c1857ee29db51426a230a98639c277bdd3bf3c5a6439e6f182e4537f2652",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/cr101/20230122_145054.log",
+      "sha256": "a1112491c1f2c1f7ac7b1deeb13e1ed0aa5ce72a38d0d2cc7863d2336102dbb0",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/cr101/cascade_water_r101_fpn_ms3x.py",
+      "sha256": "2e39c489facf8e793e68a42c9222424a34df948f26545fd5fcef252b43270d87",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/r101/20230119_151251.log",
+      "sha256": "246fdc625d37cf86ac0de2744b321bb3e3796a0b47b76be8056eda4446e28e79",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/r101/water_r101_fpn_ms3x.py",
+      "sha256": "8f991020ce979778fab0a76359efb69b0b473d4113fe9f36efc5613914f7c19e",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/r50/20230118_104531.log",
+      "sha256": "7d956b4a16ec5099bdd6d744908248f1eedfc5cff23119c9257e95261f27e852",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/r50/20230118_153505.log",
+      "sha256": "1f7af41a607c098ad7653235bb82618ac8b43ffe2446ea4064101c371bade851",
+      "zip_crc_verified": true
+    },
+    {
+      "path": "archive-extracted/WaterMask/3x/r50/water_r50_fpn_ms3x.py",
+      "sha256": "70c8d981b3a6e84bb3c8b5c2f1b4222cbbd0b9dff77557c46d451e75de912ed9",
+      "zip_crc_verified": true
+    }
+  ]
+}

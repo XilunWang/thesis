@@ -4,7 +4,7 @@
 
 ## 1. 当前状态与下一步
 
-最新核查：第50节及[基线AP审计](docs/baseline-ap-audit-20261029.md)。E0已有预测独立COCOeval重算32.6222 AP，与原报告一致；排除唯一完全重复测试图后32.6239，差异+0.0016点。与论文Mask2Former R101的25.7尚未完成训练协议对齐，不能将差异归因为预训练或认定架构优势。无新训练/推理，BLL单图任务仍暂停。
+最新核查：第51节及[WaterMask训练协议核查](docs/watermask-mask2former-protocol-audit.md)。E0的32.6222 AP已独立重算确认；作者公开Mask2Former模板为ImageNet骨干初始化，但并非可确认的UIIS最终配置。作者权重配置包已检查，没有Mask2Former对照日志，25.7 AP的实际初始化仍未知，不能将6.9点差异直接归因为预训练。无新训练/推理，BLL单图任务仍暂停。
 
 **Mask2Former-R50 在 UIIS 上的正式基线训练及评估已完成：36 轮、70884 次迭代，691 张测试图，mask AP 32.6 / AP50 47.6 / AP75 35.3。BLL候选head已通过服务器真实框架的合成特征前后向检查（CPU精确、GPU数值容差），已完成两组各20步技术短试跑及BLL正式第1轮并停止验收，完整36轮及691图COCO评估已完成；DSGAT、MFRM未实现，未复现 WaterMask，也未开展第二研究点。**
 
@@ -808,3 +808,11 @@ reports/uiis-bll-data-audit的summary、findings、逐图images.jsonl及replay/f
 ## 50. 2026-10-29：E0基线AP独立审计
 
 详见[审计报告](docs/baseline-ap-audit-20261029.md)。全部4628图文件哈希检查、标注manifest哈希和类别/ID/尺寸检查完成；691图COCOeval重算32.622218/47.637317/35.254972，六项掩码指标与原报告舍入一致。唯一跨划分完全重复图敏感性评估为32.623851 AP，原数据未删改。确认整模型COCO预训练；论文Mask2Former对照初始化仍未确认，不把预训练当作已证实原因。下一步核对作者对照配置/日志。未训练、未新推理、未连接服务器；新脚本/文档仅本地，Git推送由用户负责、未核验。
+
+## 51. 2026-10-29：WaterMask中Mask2Former预训练与配置追查
+
+详见[训练协议核查](docs/watermask-mask2former-protocol-audit.md)及[证据索引](docs/watermask-protocol-evidence-20261029.json)。锁定原始mmdet2提交，核对Mask2Former继承链、配置历史和公开讨论；模板默认ImageNet骨干、无整模型load_from，但仍为80类COCO/50e，不能认定为论文3× UIIS实际配置。与E0对照发现AdamW/基础LR/主要LSJ增强/测试尺度相近，不能笼统将全部训练设置称为不同。
+
+公开Google Drive权重包通过Range读取完整中央目录，提取9个配置/日志并校验CRC与大小，未下载约2GB权重。包内仅四组WaterMask实验，无Mask2Former。WaterMask R50首段日志确认为ImageNet骨干初始化、无整模型预训练，续训末轮26.4/43.6/28.8与论文一致；不能据此外推Mask2Former。公开25.7与E0 32.6仍只作参考对比。
+
+下一步若验证预训练影响，需制定同R50、同36轮/数据/优化/种子的“整模型COCO vs ImageNet骨干”受控协议；本轮没有启动或授权新训练，不称论文复现，E0/E1不变。Google预览请求失败、公开Range成功；旧代码zip损坏未用作证据。原始材料保存在Git忽略的work/watermask-protocol-audit，新文档与证据索引本地提交；未连接/同步服务器，远程Git用户负责、未核验。
