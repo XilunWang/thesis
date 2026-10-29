@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-29",
+  "scope": "Source audit and original adjacency function on four synthetic nodes; no model/optimizer/training",
+  "watermask_revision": "07042d254ffbdbf584ee0a5725e3c5e5e57e27c5",
+  "source_sha256": {
+    "work/p3-reference/watermask-mmdet2/water_mask_head.py": "a87535f1aaeb0518712944380b4c37d7b0dd2fe096442ef25d8229a6a167d74b",
+    "work/p3-reference/watermask-mmdet2/water_roi_head.py": "89ccd20a5470e1beebfc6f91a97c87ed684fed8cdad7828d6b6685b7d0584bca",
+    "work/p3-reference/watermask-mmdet2/water_r50_fpn_1x.py": "50bf3c9cf96e29d86339972fa7fa78772475d218d0038b87f4b9dea7a486d083",
+    "work/p3-reference/mmdet-3.3.0/mask2former_head.py": "d0895234aedc0d3c00a02a2c776be322a4cfafb3510fcb4980c076384cbf0c9b",
+    "work/p3-reference/mmdet-3.3.0/msdeformattn_pixel_decoder.py": "029c4cd38210624ea8145d672497912016cfc9ae5540a888aa20f6b202deded7",
+    "checkpoints/e0-backup/config-resume.py": "16be71283bfd13a27765a7b611c4bd01aebd6510860fb2a6cdfae39e8a3e5dfe",
+    "reports/uiis-error-analysis/report.md": "3a4e42104f50cbe46743dc36fe4aa97a9dec2f57262059f11cb79333c9f7791d",
+    "reports/e1-offline-comparison/instances.json": "2aaaf95db0d55a737f77e9d347927329222aaa395d6d27fee9e7d83c6b0a7f8f"
+  },
+  "adjacency_probe": {
+    "node_values": [
+      0,
+      1,
+      3,
+      10
+    ],
+    "k": 1,
+    "selected_node_indices": [
+      [
+        3,
+        3,
+        3,
+        0
+      ]
+    ],
+    "passed": true
+  },
+  "dense_cost_estimate": {
+    "input_canvas": 1024,
+    "feature_stride": 4,
+    "patch_stride": 3,
+    "nodes": 7225,
+    "dense_elements_per_image": 52200625,
+    "one_fp32_matrix_MiB_per_image": 199.12958145141602,
+    "one_fp32_matrix_MiB_batch2": 398.25916290283203,
+    "note": "One dense matrix only; not total VRAM, runtime benchmark or OOM prediction. k=11 does not remove dense cdist/attention matrices."
+  },
+  "baseline_unmatched": {
+    "small": {
+      "total_gt": 1194,
+      "unmatched": 539,
+      "reason_counts": {
+        "below_score_threshold": 176,
+        "no_same_class_overlap_01": 230,
+        "mask_iou_below_05": 122,
+        "wrong_class_overlap": 11
+      },
+      "with_saved_same_class_iou_ge_05": 176
+    },
+    "medium": {
+      "total_gt": 1315,
+      "unmatched": 367,
+      "reason_counts": {
+        "below_score_threshold": 202,
+        "mask_iou_below_05": 109,
+        "wrong_class_overlap": 16,
+        "no_same_class_overlap_01": 40
+      },
+      "with_saved_same_class_iou_ge_05": 202
+    },
+    "large": {
+      "total_gt": 1239,
+      "unmatched": 333,
+      "reason_counts": {
+        "below_score_threshold": 262,
+        "mask_iou_below_05": 50,
+        "wrong_class_overlap": 16,
+        "matching_competition": 1,
+        "no_same_class_overlap_01": 4
+      },
+      "with_saved_same_class_iou_ge_05": 263
+    },
+    "limitation": "Existing score0.5, same-class IoU0.5 greedy one-to-one matches. Best stored same-class masks may be low-score or already used; not oracle recall or causal attribution."
+  },
+  "validation": {
+    "source_hashes_unchanged": true,
+    "gt_count": 3748,
+    "e0_unmatched_count": 1239,
+    "reason_counts_conserved": true
+  }
+}
