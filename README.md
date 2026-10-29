@@ -4,6 +4,8 @@
 
 ## 1. 当前状态与下一步
 
+当前计划：第52节及[E0-IN初始化对照方案](docs/e0-imagenet-control-plan.md)。用户只授权制定方案，保持E0的R50/36轮/数据及训练参数，仅替换为ImageNet骨干初始化。方案已完成，入口/权重加载验收未做，训练未启动；不自动恢复其他任务。
+
 最新核查：第51节及[WaterMask训练协议核查](docs/watermask-mask2former-protocol-audit.md)。E0的32.6222 AP已独立重算确认；作者公开Mask2Former模板为ImageNet骨干初始化，但并非可确认的UIIS最终配置。作者权重配置包已检查，没有Mask2Former对照日志，25.7 AP的实际初始化仍未知，不能将6.9点差异直接归因为预训练。无新训练/推理，BLL单图任务仍暂停。
 
 **Mask2Former-R50 在 UIIS 上的正式基线训练及评估已完成：36 轮、70884 次迭代，691 张测试图，mask AP 32.6 / AP50 47.6 / AP75 35.3。BLL候选head已通过服务器真实框架的合成特征前后向检查（CPU精确、GPU数值容差），已完成两组各20步技术短试跑及BLL正式第1轮并停止验收，完整36轮及691图COCO评估已完成；DSGAT、MFRM未实现，未复现 WaterMask，也未开展第二研究点。**
@@ -816,3 +818,11 @@ reports/uiis-bll-data-audit的summary、findings、逐图images.jsonl及replay/f
 公开Google Drive权重包通过Range读取完整中央目录，提取9个配置/日志并校验CRC与大小，未下载约2GB权重。包内仅四组WaterMask实验，无Mask2Former。WaterMask R50首段日志确认为ImageNet骨干初始化、无整模型预训练，续训末轮26.4/43.6/28.8与论文一致；不能据此外推Mask2Former。公开25.7与E0 32.6仍只作参考对比。
 
 下一步若验证预训练影响，需制定同R50、同36轮/数据/优化/种子的“整模型COCO vs ImageNet骨干”受控协议；本轮没有启动或授权新训练，不称论文复现，E0/E1不变。Google预览请求失败、公开Range成功；旧代码zip损坏未用作证据。原始材料保存在Git忽略的work/watermask-protocol-audit，新文档与证据索引本地提交；未连接/同步服务器，远程Git用户负责、未核验。
+
+## 52. 2026-10-29：仅ImageNet骨干初始化对照方案（不启动）
+
+用户要求其他条件保持不变、先制定方案。已核对E0实际config-first.py/config-resume.py和原scripts/train-uiis.py，制定[E0-IN方案](docs/e0-imagenet-control-plan.md)，保留R50、官方3937/691划分、7类、36轮70884步、batch2/FP32、原AdamW/增强/种子/测试与固定epoch36评价。E0-IN独立编号，不占用E2/E3模块编号。原入口每轮保存、最近3份及12/24/36里程碑备份规则保持。
+
+关键点：E0实际backbone.init_cfg=None，不能只清空load_from；须显式加载经来源/版本/SHA256核验的ImageNet R50骨干，分割部分按原框架默认初始化。计划要求实际初始化后与首个优化步前的逐键加载检查，以及配置差异白名单，防止误用全随机/COCO/E0/E1参数。权重实际解析身份与运行验收均待做。
+
+最终只衡量同预算下初始化策略影响，不预设AP低于25.7或称论文复现，单种子不证明稳定收益。下一步为独立入口及启动前验收；本轮仅文档，无权重下载、服务器连接、模型前向、训练或正式配置/源码变更。BLL单图任务仍暂停。文档更新中一次PowerShell传Python的中文编码错误导致脚本未执行，已改用补丁完成，无实验文件受影响。方案和README本地提交，服务器未同步，Git远程用户负责、未核验。
