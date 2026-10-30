@@ -1,6 +1,6 @@
 # E1-P：原GT像素BLL正式对照实验计划
 
-2026-10-31制定；后续用户已授权入口通过后仅第一轮。入口已验收，见[pixel-bll-formal-entry-20261031.md](pixel-bll-formal-entry-20261031.md)。下文“仅计划/尚需”保留制定时门槛，首轮现已完成并停止，见[e1p-first-epoch-result-20261031.md](e1p-first-epoch-result-20261031.md)；后35轮仍未授权。E1-P是旧BLL监督方式的独立修订，不占用历史E2/MFRM、E3/DSGAT编号。旧E0/E1结果、源码和权重不覆盖。
+2026-10-31制定；后续用户已授权入口通过后仅第一轮。入口已验收，见[pixel-bll-formal-entry-20261031.md](pixel-bll-formal-entry-20261031.md)。下文“仅计划/尚需”保留制定时门槛，首轮现已完成并停止，见[e1p-first-epoch-result-20261031.md](e1p-first-epoch-result-20261031.md)；用户随后已授权剩余35轮及完成后统一评价，见[e1p-resume-35epochs-20261031.md](e1p-resume-35epochs-20261031.md)；不改变本计划的训练/评价参数。E1-P是旧BLL监督方式的独立修订，不占用历史E2/MFRM、E3/DSGAT编号。旧E0/E1结果、源码和权重不覆盖。
 
 ## 问题与比较对象
 
