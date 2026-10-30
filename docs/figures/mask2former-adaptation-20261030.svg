@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1540" viewBox="0 0 1800 1540">
+<rect width="1800" height="1540" fill="#f7f9fc"/>
+<text x="900" y="49" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="40" font-weight="700" fill="#203047">面向 Mask2Former 的适配设计</text>
+<text x="900" y="99" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="24" font-weight="400" fill="#203047">2026-10-30 · 设计稿，尚未实现或验证收益 · 本轮不改模型、不训练</text>
+<text x="900" y="145" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">白色：原有机制    蓝色：先验证 D    绿色：后续 R    橙色虚线：仅训练的 B</text>
+<rect x="50" y="200" width="470" height="140" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="285.0" y="231" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">水下图像 → ResNet-50</text>
+<text x="285.0" y="269" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">C2：stride 4，浅层空间信息</text>
+<text x="285.0" y="300" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">C3 / C4 / C5：高层特征</text>
+<rect x="660" y="200" width="480" height="140" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="900.0" y="231" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">原像素解码器</text>
+<text x="900.0" y="269" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">6 层多尺度注意力 + 浅层融合</text>
+<text x="900.0" y="300" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">输出共享 mask 特征 F 和 memory</text>
+<rect x="1280" y="200" width="470" height="140" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="1515.0" y="231" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">原 Transformer 解码器</text>
+<text x="1515.0" y="269" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">9 层更新 100 个实例 query</text>
+<text x="1515.0" y="300" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">每层按原逻辑预测 mask</text>
+<polyline points="520,270 660,270" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="660,270 646.4932934647098,276.52448301166845 646.4932934647098,263.47551698833155" fill="#66788b"/>
+<polyline points="1140,270 1280,270" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1280,270 1266.49329346471,276.52448301166845 1266.49329346471,263.47551698833155" fill="#66788b"/>
+<rect x="50" y="400" width="470" height="140" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="285.0" y="431" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">浅层特征 C2</text>
+<text x="285.0" y="469" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">不新增检测框或 RoI</text>
+<text x="285.0" y="500" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">与 F 处于相同 stride 4 网格</text>
+<rect x="660" y="400" width="480" height="170" rx="12" fill="#e7f0ff" stroke="#3975b5" stroke-width="2"/>
+<text x="900.0" y="431" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">D：门控细节残差补充</text>
+<text x="900.0" y="469" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">局部变化 H + 语义门控 G</text>
+<text x="900.0" y="500" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">F_D = F + 零初始化出口的残差</text>
+<text x="900.0" y="531" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">关闭时直接使用原 F</text>
+<rect x="1280" y="400" width="470" height="140" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="1515.0" y="431" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">最终实例信息 q</text>
+<text x="1515.0" y="469" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">q：每个实例的特征向量</text>
+<text x="1515.0" y="500" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">保留原分类分支</text>
+<polyline points="285,340 285,400" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="285,400 278.47551698833155,386.49329346470984 291.52448301166845,386.49329346470984" fill="#66788b"/>
+<polyline points="900,340 900,400" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="900,400 893.4755169883315,386.49329346470984 906.5244830116685,386.49329346470984" fill="#66788b"/>
+<polyline points="520,470 660,470" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="660,470 646.4932934647098,476.52448301166845 646.4932934647098,463.47551698833155" fill="#66788b"/>
+<polyline points="1515,340 1515,400" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1515,400 1508.4755169883315,386.49329346470984 1521.5244830116685,386.49329346470984" fill="#66788b"/>
+<rect x="660" y="640" width="480" height="135" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="900.0" y="671" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">原点积掩码头 → 初始掩码 M0</text>
+<text x="900.0" y="709" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">mask_embed(q) 与 F_D 结合</text>
+<text x="900.0" y="740" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">D 用于各层 mask，影响后续注意力</text>
+<rect x="1280" y="640" width="470" height="135" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="1515.0" y="671" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">原分类输出</text>
+<text x="1515.0" y="709" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">不新增分类器或评分模块</text>
+<text x="1515.0" y="740" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">联合训练仍可能影响类别判断</text>
+<polyline points="900,570 900,640" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="900,640 893.4755169883315,626.4932934647098 906.5244830116685,626.4932934647098" fill="#66788b"/>
+<polyline points="1280,505 1210,505 1210,695 1140,695" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1140,695 1153.50670653529,688.4755169883315 1153.50670653529,701.5244830116685" fill="#66788b"/>
+<polyline points="1515,540 1515,640" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1515,640 1508.4755169883315,626.4932934647098 1521.5244830116685,626.4932934647098" fill="#66788b"/>
+<rect x="660" y="850" width="480" height="170" rx="12" fill="#e7f5ed" stroke="#38875b" stroke-width="2"/>
+<text x="900.0" y="881" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">R：query 条件空间细化</text>
+<text x="900.0" y="919" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">输入 C2、F 或 F_D、q、M0</text>
+<text x="900.0" y="950" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">共享轻量卷积，按 query 修正</text>
+<text x="900.0" y="981" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">M_ref = M0 + 实例空间残差</text>
+<polyline points="900,775 900,850" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="900,850 893.4755169883315,836.4932934647098 906.5244830116685,836.4932934647098" fill="#66788b"/>
+<polyline points="1210,695 1210,905 1140,905" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1140,905 1153.50670653529,898.4755169883315 1153.50670653529,911.5244830116685" fill="#66788b"/>
+<polyline points="660,535 600,535 600,880 660,880" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="660,880 646.4932934647098,886.5244830116685 646.4932934647098,873.4755169883315" fill="#66788b"/>
+<text x="584" y="796" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="22" font-weight="400" fill="#203047">F</text>
+<polyline points="285,540 285,935 660,935" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="660,935 646.4932934647098,941.5244830116685 646.4932934647098,928.4755169883315" fill="#66788b"/>
+<text x="434" y="902" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="22" font-weight="400" fill="#203047">C2 空间细节</text>
+<rect x="1280" y="850" width="470" height="170" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="1515.0" y="881" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">R 的设计边界</text>
+<text x="1515.0" y="919" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">同一 query 保持实例对应</text>
+<text x="1515.0" y="950" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">一次细化，仍是 stride 4</text>
+<text x="1515.0" y="981" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">无 RoI；不宣称新增真实分辨率</text>
+<rect x="660" y="1090" width="480" height="120" rx="12" fill="#e7f5ed" stroke="#38875b" stroke-width="2"/>
+<text x="900.0" y="1121" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">细化后的实例掩码 M_ref</text>
+<text x="900.0" y="1159" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">原区域损失监督；推理使用此输出</text>
+<polyline points="900,1020 900,1090" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="900,1090 893.4755169883315,1076.49329346471 906.5244830116685,1076.49329346471" fill="#66788b"/>
+<rect x="1280" y="1090" width="470" height="120" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="1515.0" y="1121" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">沿用原实例后处理</text>
+<text x="1515.0" y="1159" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">原类别概率 × 细化 mask 置信度</text>
+<polyline points="1140,1150 1280,1150" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1280,1150 1266.49329346471,1156.5244830116685 1266.49329346471,1143.4755169883315" fill="#66788b"/>
+<polyline points="1750,707 1774,707 1774,1050 1515,1050 1515,1090" fill="none" stroke="#66788b" stroke-width="3"/>
+<polygon points="1515,1090 1508.4755169883315,1076.49329346471 1521.5244830116685,1076.49329346471" fill="#66788b"/>
+<rect x="50" y="1090" width="470" height="120" rx="12" fill="#ffffff" stroke="#8b99aa" stroke-width="2"/>
+<text x="285.0" y="1121" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">增强后的原始实例标注</text>
+<text x="285.0" y="1159" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">不使用旧 E1 的占有式缩小目标</text>
+<rect x="660" y="1290" width="480" height="145" rx="12" fill="#fff0db" stroke="#b87821" stroke-width="2"/>
+<text x="900.0" y="1321" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="27" font-weight="700" fill="#203047">B：边缘点监督（候选）</text>
+<text x="900.0" y="1359" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">原 GT 与 M0 决定检查区域</text>
+<text x="900.0" y="1390" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="23" font-weight="400" fill="#203047">从原 GT 取点，监督 M_ref</text>
+<polyline points="285,1210 285,1362 660,1362" fill="none" stroke="#b87821" stroke-width="3" stroke-dasharray="8 8"/>
+<polygon points="660,1362 646.4932934647098,1368.5244830116685 646.4932934647098,1355.4755169883315" fill="#b87821"/>
+<polyline points="900,1210 900,1290" fill="none" stroke="#b87821" stroke-width="3" stroke-dasharray="8 8"/>
+<polygon points="900,1290 893.4755169883315,1276.49329346471 906.5244830116685,1276.49329346471" fill="#b87821"/>
+<text x="900" y="1490" text-anchor="middle" dominant-baseline="central" font-family="Microsoft YaHei,sans-serif" font-size="26" font-weight="700" fill="#203047">实施顺序：D 单独验证 → R 单独验证 → 按证据组合 → 再验证 B；每步可停止</text>
+</svg>
