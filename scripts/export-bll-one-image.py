@@ -14,7 +14,9 @@ def gradient_comparison(a,b):
   cosine=float(torch.dot(a,b)/(a.norm()*b.norm())) if na and nb else None,
   jointly_nonzero=int(active.sum()),opposite_sign=int(((a*b<0)&active).sum()))
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('--image-id',type=int,default=0);args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('--image-id',type=int,default=0)
+ parser.add_argument('--small-rank',type=int,default=None,help='Select rank among first128 images with augmented GT area in (0,1024); no prediction-based selection')
+ args=parser.parse_args()
  from mmengine.dataset import pseudo_collate
  from mmdet.registry import MODELS,DATASETS
  from mmdet.utils import register_all_modules
@@ -22,6 +24,9 @@ def main():
  from scripts.query_bll import build_bll_targets
  from scripts.bll_core import boundary
  suffix='' if args.image_id==0 else '-id'+str(args.image_id)
+ if args.small_rank is not None:
+  assert 0<=args.small_rank<3
+  suffix='-small-rank'+str(args.small_rank)
  out=R/('reports/bll-real-gradient-20261030'+suffix);out.mkdir(parents=True,exist_ok=False)
  with (R/'work_dirs/uiis-training.lock').open('a') as lock:
   fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -31,8 +36,23 @@ def main():
   ck=R/'work_dirs/uiis_e1_bll_r50_36e/epoch_36.pth';digest=sha(ck)
   assert digest=='6d89f04575ec2a28b441c3f681e38627cf2273638de3ee6394bedb03279e8176'
   dataset=DATASETS.build(cfg.train_dataloader.dataset);dataset.full_init()
-  index=next(i for i in range(len(dataset)) if dataset.get_data_info(i)['img_id']==args.image_id);info=dataset.get_data_info(index)
-  item=dataset.prepare_data(index);assert item is not None and item['data_samples'].img_id==info['img_id']
+  selection=[];seed=20261021
+  if args.small_rank is None:
+   index=next(i for i in range(len(dataset)) if dataset.get_data_info(i)['img_id']==args.image_id);info=dataset.get_data_info(index)
+   item=dataset.prepare_data(index)
+  else:
+   found=0;item=None
+   for index in sorted(range(len(dataset)),key=lambda i:dataset.get_data_info(i)['img_id'])[:128]:
+    info=dataset.get_data_info(index);seed=20261021+info['img_id']
+    random.seed(seed);np.random.seed(seed);torch.manual_seed(seed)
+    probe=dataset.prepare_data(index)
+    areas=[] if probe is None else probe['data_samples'].gt_instances.masks.areas.tolist()
+    eligible=any(0<a<1024 for a in areas)
+    selection.append(dict(image_id=info['img_id'],seed=seed,areas=areas,eligible=eligible))
+    if eligible:
+     if found==args.small_rank:item=probe;break
+     found+=1
+  assert item is not None and item['data_samples'].img_id==info['img_id']
   raw_input=item['inputs'].numpy().copy()
   model=MODELS.build(cfg.model).cuda();state=torch.load(ck,map_location='cpu')['state_dict'];model.load_state_dict(state,strict=True);model.train()
   arrays={};records=[];live={};head=model.panoptic_head;original_targets=head._get_targets_single;original_loss=adapter.query_boundary_loss
@@ -87,5 +107,6 @@ def main():
   arrays.update(input_bgr=raw_input,matched_labels=labels[qi],original_mask_targets=targets)
   np.savez_compressed(out/'trace.npz',**arrays)
   meta=dict(passed=True,image_id=info['img_id'],filename=Path(info['img_path']).name,seed=20261021,checkpoint_sha256=digest,training=False,model_training_mode=True,optimizer_created=False,model_state_unchanged=True,actual_train_pipeline=True,comparisons=comparisons,independent_bce=float(oracle),scope='One fixed training augmentation at E1 epoch36; original final mask BCE+Dice only, not total training objective or causal proof',layer_assignments_observed=len(records),matched=len(qi),losses={k:float(v.detach()) for k,v in losses.items()},trace_sha256=sha(out/'trace.npz'),source_sha256={f:sha(R/f) for f in ['scripts/query_bll.py','scripts/bll_core.py','scripts/bll_mask2former_head.py','scripts/export-bll-one-image.py']})
+  meta.update(seed=seed,selection=selection,small_rank=args.small_rank)
   (out/'metadata.json').write_text(json.dumps(meta,indent=2));print(json.dumps(meta),flush=True)
 if __name__=='__main__':main()
