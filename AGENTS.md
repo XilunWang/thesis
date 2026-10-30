@@ -24,7 +24,7 @@
 
 最新首轮结果（2026-10-31）：E1-P第一轮1969步已完成并自动停止，25分55秒，日志最大14.49 GiB；只读inspection通过，345组优化器step=1969，前景守卫无触发。权重已备份checkpoints/e1p-backup并核对哈希，报告下载超时重试后完成。见docs/e1p-first-epoch-result-20261031.md。后35轮暂停，未测试集评估，不自动续训、改正式resume门槛或以loss下降声称收益。
 
-当前续训授权（2026-10-31）：用户明确要求检查通过后从E1-P首轮续训剩余35轮，保持参数，完成后统一评价并比较E0/E1。本条取代此前E1-P暂停/禁止续训及评价的限制，但不授权重训E0/E1或调参。预检和Runner零更新恢复已通过。独立入口resume-uiis-pixel-bll.py保留原首轮源码不变，编排run-e1p-resume-and-evaluate.py一次性训练→固定36轮评价→三组离线对比，失败不自动重试。见docs/e1p-resume-35epochs-20261031.md，以reports/e1p-resume-35epochs/process-result.json判断完成，不启动重复进程。
+当前续训授权（2026-10-31）：用户明确要求检查通过后从E1-P首轮续训剩余35轮，保持参数，完成后统一评价并比较E0/E1。本条取代此前E1-P暂停/禁止续训及评价的限制，但不授权重训E0/E1或调参。预检和Runner零更新恢复已通过。独立入口resume-uiis-pixel-bll.py保留原首轮源码不变，编排run-e1p-resume-and-evaluate.py一次性训练→固定36轮评价→三组离线对比，失败不自动重试。见docs/e1p-resume-35epochs-20261031.md，2026-10-31 01:37:33已启动（编排PID7051/训练PID7053），已确认第2轮恢复后实际更新正常。以reports/e1p-resume-35epochs/process-result.json判断完成，不启动重复进程。
 
 D/R/B设计、E0-IN、评分模块与第二研究点暂缓，不按旧图或旧PPT自动推进。只依据实验计划、源码和实际结果；不得把假设、准备脚本或合成检查写成真实模型结论。
 
