@@ -30,3 +30,5 @@ compare-pixel-bll-offline.py继承既有配对/COCO/边界计算，增加E1-P输
 正式目录work_dirs/uiis_e1p_pixel_bll_r50_36e，首轮报告reports/e1p-first-epoch。尚未完成的实际首轮结果以该目录inspection.json及后续报告为准，不把本入口验收通过当首轮已完成。
 
 最终预检已通过：4631个manifest条目核对，官方3937/691及重复图保留，预训练与E0哈希一致，V100空闲、可用磁盘约27.3 GiB。2026-10-31 01:03:54预检完成，随后首轮启动；源码基于b273611。当前仅首轮运行，完成后另记实际结果。
+
+首轮最终状态：已完成1969步并自动停止、只读验收通过，详见[e1p-first-epoch-result-20261031.md](e1p-first-epoch-result-20261031.md)。后35轮暂停，不使用前文运行中状态作为当前指令。
