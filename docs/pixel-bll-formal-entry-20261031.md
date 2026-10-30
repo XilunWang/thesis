@@ -28,3 +28,5 @@ compare-pixel-bll-offline.py继承既有配对/COCO/边界计算，增加E1-P输
 启动包装run-e1p-first-epoch.py先核对来源哈希、完整官方数据manifest/重复图、预训练、既有E0、空闲GPU及磁盘，再仅运行stage=first。最多3小时安全超时，不自动重启。结束写process-result.json并调用只读inspect-e1p-first-epoch.py检查1轮1969步、345组AdamW计数、610模型张量、保存文件、有限数值、日志和源码/数据未改。
 
 正式目录work_dirs/uiis_e1p_pixel_bll_r50_36e，首轮报告reports/e1p-first-epoch。尚未完成的实际首轮结果以该目录inspection.json及后续报告为准，不把本入口验收通过当首轮已完成。
+
+最终预检已通过：4631个manifest条目核对，官方3937/691及重复图保留，预训练与E0哈希一致，V100空闲、可用磁盘约27.3 GiB。2026-10-31 01:03:54预检完成，随后首轮启动；源码基于b273611。当前仅首轮运行，完成后另记实际结果。
