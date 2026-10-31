@@ -74,3 +74,7 @@ E0实际匹配906大目标的掩码IoU均值87.51%、边界IoU70.00%；同一集
 脚本scripts/audit-baseline-priorities.py；reports/baseline-priorities-20261031/result.json、instances.json。所有3748个普通GT的最高同类IoU与旧诊断逐条一致（误差<1e-10），候选三类计数守恒，原预测SHA256前后不变，passed=true。原始日志reports/baseline-priorities-20261031.log。
 
 这份结果没有推导新的AP因果贡献，也没有读取未保存的query logits。以前BLL实验不能替代这份原版问题判断；MFRM可行性审查保持为历史候选，不作为当前下一实施项。
+
+## 后续尺度实验已完成
+
+见[24图尺度对照结果](baseline-scale-pilot-result-20261031.md)：固定E0放大1.5倍，小目标匹配80→95，但误报410→439、共同掩码质量下降、耗时增加，未证明整体提升。下一步建议转向训练增强可见性审计，不直接训练或扩展尺度搜索。
