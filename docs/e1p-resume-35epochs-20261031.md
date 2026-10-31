@@ -44,3 +44,7 @@
 ## 2026-10-31 16:37训练完成、评价开始
 
 16:37:06训练正常退出，training_returncode=0，36轮70884步，resume_verified=true；日志已保存epoch36并输出E1P_36_EPOCHS_COMPLETE。16:37:15状态stage=evaluation、completed=false，尚无最终AP或边界对比，不能判断新监督改善。快照reports/e1p-resume-35epochs/status-20261031-1637.json。首次连接受网络权限限制解析失败，授权后SERVER_READY；未重启训练或修改参数。后续等待评价与比较完成，再核验并下载最终权重、预测、报告；服务器保持开机。
+
+## 最终完成与备份
+
+16:41:35训练、评价及比较全流程完成，三个退出码均0。新方案AP31.0、大目标AP43.9；共同目标边界比旧BLL恢复，但仍低于原版，不达收益要求，详见[e1p-final-result-20261031.md](e1p-final-result-20261031.md)。最终权重、恢复配置/结果、预测和报告已本地备份；权重与预测SHA256核对通过。服务器GPU空闲，未关机。
