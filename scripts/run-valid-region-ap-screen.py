@@ -62,9 +62,13 @@ def compare_predictions(paths):
 def execute_sequence(out,deadline):
  started=time.time();result=dict(completed=False,started_at=started,deadline=deadline,stages=[])
  try:
+  trained=[]
   for arm in ARMS:
-   cfg,path=train_arm(arm,deadline);result['stages'].append(dict(arm=arm,training_complete=True))
-   metrics=evaluate_config(cfg,path,ROOT/f'reports/valid-region-ap-screen-{arm}',deadline);result['stages'][-1]['evaluation']=metrics
+   cfg,path=train_arm(arm,deadline);result['stages'].append(dict(arm=arm,training_complete=True));trained.append((arm,cfg,path))
+   (out/'progress.json').write_text(json.dumps(result,indent=2))
+  for index,(arm,cfg,path) in enumerate(trained):
+   metrics=evaluate_config(cfg,path,ROOT/f'reports/valid-region-ap-screen-{arm}',deadline);result['stages'][index]['evaluation']=metrics
+   (out/'progress.json').write_text(json.dumps(result,indent=2))
   comparison=compare_predictions({'E0':ROOT/'reports/uiis-baseline-36e-evaluation/predictions.segm.json',**{a:ROOT/f'reports/valid-region-ap-screen-{a}/predictions.segm.json' for a in ARMS}})
   (out/'comparison.json').write_text(json.dumps(comparison,indent=2));result['completed']=True
  except BaseException:

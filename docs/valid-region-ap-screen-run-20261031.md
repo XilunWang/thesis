@@ -1,0 +1,39 @@
+# 有效区域采样A/B三轮对照：运行记录
+
+2026-10-31用户明确授权：先检查服务器，通过后原版和有效区域采样版各3轮，两组完成后统一评价。本记录取代历史文档中的“尚未授权”状态；不授权任何后续追加训练。
+
+## 启动前结果
+
+21:24服务器检查SERVER_READY。V100-PCIE-32GB显存0MiB，无GPU计算进程；可用磁盘24,105,283,584字节，约22.4GiB。服务器项目、Python及官方训练/测试标注存在。
+
+21:25:18完整封存哈希检查通过：两组配置、head、运行保护器、执行入口、preparation，以及配置所指E0权重和train/val标注。两组正式工作目录、评价目录及run目录原先均不存在，无重复启动。
+
+## 与冻结方案的差异
+
+用户要求两组完成后统一评价，因此仅将execute_sequence从“训练A→评价A→训练B→评价B→汇总”改为“训练A→训练B→评价A→评价B→汇总”。增加阶段progress.json。网络/配置/训练参数/评价函数/时间与数值保护不变。
+
+本地抽取实际编排函数，替换训练和评价为无更新stub，检查正常顺序以及A训练/B训练/A评价/B评价分别失败时立即停止，5项通过。没有实际优化器更新。保留旧acceptance-before-deferred-evaluation.json，新增deferred-evaluation-check.json；仅更新执行入口的封存哈希，其余沿用既有完整验收，不把模拟检查说成重新完成模型训练验收。
+
+初次本地检查在临时目录写入时遇到沙箱Permission denied，尚未改源码；下一次试图读取临时脚本时因每次沙箱临时路径变化失败。随后将脚本及检查输出放在项目已授权目录，全部通过。两次失败均发生在启动训练前，不涉及模型、参数或验收阈值修改。
+
+入口SHA256：0b3410a2e917bab19570e027c0bfa54c02911c6a3acb8e49b2e966a59d361dbf。
+
+## 已启动及约束
+
+21:25服务器后台启动PID4348，启动命令.venv/bin/python -u -B scripts/run-valid-region-ap-screen.py --execute。独立会话、stdin关闭、日志写服务器文件，不依赖本机SSH窗口持续连接。进程使用训练锁并拒绝覆盖已有实验目录。
+
+- A/B均从同一E0 epoch36加载模型，各自全新优化器，各3轮5907步。B不继承A训练结果。
+- 全3937训练图、原增强及重复图不变，恒定LR1e-5，其余参数与封存配置一致。
+- 两组完成后各评价691图固定epoch3，以同一COCO口径比较E0/A/B，按冻结收益门槛汇总。
+- 预计总2.5–3.5小时；总预算4小时，在安全边界停止。失败停止，不自动改参数、重试或追加35/36轮，不自动关服务器。
+- 两组训练和评价尚未完成，不能宣称AP收益。运行结果以服务器process-result.json和comparison.json为准。
+
+服务器证据：reports/valid-region-ap-screen-launch-20261031/{preflight.json,launch.json,console.log}；运行记录reports/valid-region-ap-screen-run/{progress.json,process-result.json,comparison.json}（各阶段按完成情况生成）。训练目录work_dirs/valid_region_ap_screen_control、work_dirs/valid_region_ap_screen_candidate。
+
+本地README/计划/授权状态更新并Git提交；Git远程推送由用户完成。运行入口及验收文件已同步服务器且核验，文档同步单独记录。
+
+## 首批实际更新确认
+
+21:26:19原版A已完成第1轮50/1969步；loss15.5907、各分项及grad_norm均为有限值，日志无NaN/Inf/OOM或Traceback。约0.794秒/步，日志ETA约1小时17分钟仅指A剩余训练，不含B和统一评价。GPU占用约11.4GiB；弃用及meshgrid未来接口提示不是本次训练失败。首批通过不代表后续必然无异常或AP有收益。
+
+README、AGENTS、计划及本记录已同步服务器。完整日志留服务器，本地保存启动元数据与首次进度快照。两组尚未完成，后续以实际终态核验。
