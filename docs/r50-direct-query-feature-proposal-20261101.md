@@ -1,6 +1,6 @@
 # R50中层特征直连查询解码器：候选设计与验证
 
-日期2026-11-01。状态：仅方案，不实现模块、不安装环境、不连接服务器、不训练。依据feature-readout-result-20261101.md；不恢复DiveSeg、BLL、简单有效区域采样、邻居辅助query或MFRM计划。
+日期2026-11-01。下文为执行前设计。用户后续已授权无训练接入验收，现已通过，见[验收结果](direct-query-integration-result-20261101.md)；没有参数更新或训练。依据feature-readout-result-20261101.md；不恢复DiveSeg、BLL、简单有效区域采样、邻居辅助query或MFRM计划。
 
 ## 建议及证据边界
 
