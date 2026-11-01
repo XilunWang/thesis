@@ -1,0 +1,98 @@
+{
+  "version": "label-only-pilot-v1",
+  "steps": 300,
+  "batch_size": 2,
+  "minimum_coral_hits": 16,
+  "max_training_seconds": 1800,
+  "initialization": "Exact old step0 weights + empty AdamW + saved RNG; never old step300",
+  "settings": {
+    "optimizer": {
+      "type": "AdamW",
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08
+    },
+    "order_seed": 20261102,
+    "initialization_seed": 20261101,
+    "grad_clip_norm": 1.0,
+    "precision": "fp32",
+    "schedule": "constant",
+    "checkpoints": [
+      0,
+      100,
+      300
+    ],
+    "diagnostic_k": [
+      20,
+      50,
+      100,
+      200
+    ],
+    "primary_k": 100,
+    "random_control_seeds": [
+      20261201,
+      20261202,
+      20261203,
+      20261204,
+      20261205,
+      20261206,
+      20261207,
+      20261208,
+      20261209,
+      20261210
+    ]
+  },
+  "training_order_sha256": "aaed2ed6ee28732aaa3a5c7dfc76d11d2de76edf005beadc943d4e2cf9788050",
+  "code_sha256": {
+    "identity_data_pipeline.py": "4083d953e4aa03a4a5028643168ebea1ddf85aa639f7a8618411372d96363e42",
+    "instance_representative.py": "91f56e0fa14281fba7c196b82e2170d1bea4ba634cd3492b84dfcf9b3e562bdf",
+    "isolated_position_head.py": "19053f8440eafbf01f0eaa429c995573e0243a8c679974694012be2f19df91be",
+    "label_only_pilot_metrics.py": "a258891f27a7ceccf5b86d193b8c58d16e9384c33508d20c45d15930e45c021b",
+    "position_grid4.py": "69be99f6b8803027060105dcdc0855d929b45448db94471032f8d1eb21397740",
+    "position_grid4_metrics.py": "195af9f7bec5e01b517740e6eced7d9fff52f629f2ca19a3eaf42cb11d0c7d20",
+    "position_pilot_runtime.py": "dbc7be76967498657014d51e696e81444d2e8e512a8232e9e3f01abd2a4da7a6",
+    "representative_label_only.py": "0e7ffc32336123c4c389e2eb6c2c960bb4c803446257b6bed6d5071ed39fc98a",
+    "run-label-only-pilot.py": "63076eb1130335ffe3a71ef9e9e769c122bed55c9c995a10495177ed30f5c206",
+    "run-position-grid4-pilot.py": "59b7c1563ea993d877fa1ca7a47c712ddf184d1be2fe0a9db00f642a754cefbc"
+  },
+  "source_sha256": {
+    "reports/position-learning-plan-grid4-20261101/manifest.json": "efbdf5f3afe9bb8a9dc5be5449dfdbf1d1f1ad0d4786aa37f83ea1d95ee5fd04",
+    "reports/position-learning-plan-grid4-20261101/views.json": "7cb62fb18dc0f92d7d1ad679063a0614b4cfefa706e593c4a44f186c9a8f539e",
+    "reports/representative-label-model-20261101/result.json": "25a599bdd00b79af3c1d787ab42f01ffec894efe6a43e9cad3a3ff583330e62c",
+    "data/UIIS/annotations/train.json": "9cc586e559f54533a938e34a89017d47784c3646bc43ab2cd0d88e140ef5b49d",
+    "reports/position-learning-preflight-20261101/holdout-2971-21263983.json": "4b81490055ab5061c839834375a6c04204108801af0c0970fc440f720224d992",
+    "reports/position-learning-preflight-20261101/holdout-3151-20264163.json": "2b5f2e9ad351b63ef88cb43eaaa7ad21e98b162b78bab9597276cccdd5d8dbe8",
+    "reports/position-learning-preflight-20261101/holdout-2811-20263823.json": "c945c425b9497a7290476822b6c4d50a87b0d8a950c67f3cf12f6c92c6eee42d",
+    "reports/position-learning-preflight-20261101/holdout-2811-21263823.json": "11eba4f230f968ad08f275a177e8df44aef74cc2b789474c508e6b92ff827992",
+    "reports/position-learning-preflight-20261101/holdout-2876-20263888.json": "75fb89c5046032d4c1f3f07dd02b2838af6b15fecf82694b558091b5defa442a",
+    "reports/position-learning-preflight-20261101/holdout-3196-21264208.json": "08d1e3043004bee21ef30c32784a5f5a7fab86a7e6633e39e76e4bc8c16d1168",
+    "reports/position-learning-preflight-20261101/holdout-3040-21264052.json": "efb8e7edf1dbbf053fc3f8b2351aff88debc56cf170b5face3e844550586a107",
+    "reports/position-learning-preflight-20261101/holdout-2936-20263948.json": "78a73ab5d937e90da865ed308478dbda9625faf0a9fa737da021c8805dc8d154",
+    "reports/position-learning-preflight-20261101/holdout-2833-21263845.json": "736f3e63925bb09db4a3e1ddb83b5cc5d468e06218fcdd040bb9b55daf35130c"
+  },
+  "control_sha256": {
+    "step0.pth": "549724d10309bb571fde96182e9d142779d3dca0bc50ec3536eee34f89f04eaf",
+    "step300.pth": "6e1d9daef8e02017d871f4de94b1516698dc51d60c39348249301dfb197c7252",
+    "eval-0.json": "4fd505c1b2b8a7ac52a45b203f395d23231cd7b670f0ea3c4f70caa8e520d47d",
+    "eval-300.json": "fc626f2f3d55ebb674be28bd207ae6a2db58bba8d2b937d875670396b1185716",
+    "steps.jsonl": "aba62942b7a225ce1f38097eb951e94a7f8b39eaf032e8019cd7e51b77c1714d",
+    "result.json": "46de2411178c912a867830e95970ba0aea19b0f16c2282d3846487854e2e6631"
+  },
+  "gates": {
+    "overall_hits_min": 400,
+    "fish_hits_min": 388,
+    "coral_hits_min": 16,
+    "occupied_pair_hits_min": 12,
+    "no_touch_max": 9196,
+    "redundant_max": 3204
+  },
+  "coral_rationale": "Initial 14/28, random mean 49.64%; require >=5 percentage-point gain over both, rounded up =>16/28. Also improve over old final9/28.",
+  "evaluation": "Original unchanged full 384 views at 0/100/300; primary holdout64 images128 views. Old fixed seeds retained as diagnostics. New occupied-pair metric applied to both arms.",
+  "stop": "300 updates maximum; no extension. Train-loop cap1800seconds excluding evaluation. Nonfinite values, hashes, label capacity, baseline changes or interrupted run: stop, preserve checkpoint, no automatic restart.",
+  "training_authorized": false,
+  "readiness": "Local preparation only. GPU batch2/preflight/save-restore pending; explicit authorization required for execute."
+}
