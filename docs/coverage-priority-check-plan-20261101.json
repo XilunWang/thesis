@@ -1,0 +1,15 @@
+{
+  "version": "coverage-priority-v1-offline",
+  "training_updates": 0,
+  "rule": "Same support and augmenting-path matching as prior; candidate sort by descending own-GT pixel count (1..16), descending detached score, ascending cell ID; instances by support count then ID. No support deletion.",
+  "scope": "All 384 frozen augmented views: synthetic row-major and reverse priorities; actual cached 12 views x 4 heads separately.",
+  "tiny_definition": "retained small GT with augmented mask area <=16 pixels",
+  "gates": [
+    "all retained small instances have unique valid intersecting cells",
+    "all frozen neighbor pair observations remain distinct",
+    "no tiny instance dropped",
+    "on actual cached views partial cells and center-outside count do not increase vs same-score original rule"
+  ],
+  "limitation": "Preference matching is not maximum total coverage optimization; fallback may use lower coverage to preserve cardinality. Synthetic scores test geometry not learned outputs.",
+  "views_sha256": "7cb62fb18dc0f92d7d1ad679063a0614b4cfefa706e593c4a44f186c9a8f539e"
+}
