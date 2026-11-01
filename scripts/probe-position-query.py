@@ -10,7 +10,7 @@ import traceback
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-OUT = ROOT / 'reports/position-query-probe-20261101'
+OUT = ROOT / 'reports/position-query-probe-20261101/attempt-2'
 CASES = [(2, 1106, 21262118, [(5354, 18015)]),
          (3, 2271, 21263283, [(13226, 18173), (13227, 649)]),
          (8, 730, 20261742, [(3411, 60569)])]
