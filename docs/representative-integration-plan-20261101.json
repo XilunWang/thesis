@@ -1,0 +1,59 @@
+{
+  "version": "instance-representative-v1",
+  "weights": {
+    "positive": 0.5,
+    "duplicate": 0.25,
+    "outside": 0.25
+  },
+  "training_updates_allowed": 0,
+  "head_checkpoints": [
+    0,
+    300
+  ],
+  "views": [
+    {
+      "image_id": 585,
+      "seed": 20261597,
+      "pairs": []
+    },
+    {
+      "image_id": 2809,
+      "seed": 20263821,
+      "pairs": [
+        [
+          16538,
+          16539
+        ]
+      ]
+    },
+    {
+      "image_id": 2811,
+      "seed": 21263823,
+      "pairs": [
+        [
+          16581,
+          16610
+        ],
+        [
+          16582,
+          16592
+        ]
+      ]
+    }
+  ],
+  "normalized_direction_tolerance": 1e-06,
+  "code_sha256": {
+    "instance_representative.py": "91f56e0fa14281fba7c196b82e2170d1bea4ba634cd3492b84dfcf9b3e562bdf",
+    "check-representative-model.py": "dd0698579d773c557c4df2b2876a48b8fe8b17dfc1278756b0f960a148be1dc8",
+    "check-representative-local.py": "012125f32357de593c73d85ea62a1890b7c6a6843e5b64357ba75c78fc26a41c"
+  },
+  "hypothesis": "GT representative protection removes direct cross-logit suppression; shared-parameter effects measured separately, not assumed safe.",
+  "averaging": "Positive instance mean, duplicate within-instance then nonempty-instance mean, outside cell mean, then equal image mean; empty terms zero; fixed weights without renormalization.",
+  "selection": "Detached score-preferred maximum-cardinality matching; no global-score optimum claim; all representatives protected.",
+  "decision": "No training. Report engineering and shared-parameter directions separately. No parameter tuning after inspection.",
+  "local_tolerances": {
+    "gradient_atol": 1e-07,
+    "gradient_rtol": 1e-05
+  },
+  "limitation": "Directional derivatives are first-order SGD unit directions, not actual AdamW updates or AP effects. Only fixed selected pairs."
+}
