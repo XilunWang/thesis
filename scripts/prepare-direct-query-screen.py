@@ -36,7 +36,11 @@ def main():
  process=json.loads((ROOT/'reports/valid-region-ap-screen-run/process-result.json').read_text());assert process['completed']
  metrics=json.loads((ROOT/'reports/valid-region-ap-screen-control/metrics.json').read_text());assert metrics['completed'] and metrics['checkpoint_sha256']==verification['checks']['control']['checkpoint_sha256']
  acceptance=json.loads((ROOT/'reports/direct-query-integration-20261101/result.json').read_text());assert acceptance['passed']
- head=ROOT/'scripts/direct_query_feature_head.py';assert sha(head)==acceptance['source_hashes']['scripts/direct_query_feature_head.py']
+ head=ROOT/'scripts/direct_query_feature_head.py'
+ startup_path=ROOT/'reports/direct-query-startup-20261101/acceptance.json'
+ startup=json.loads(startup_path.read_text()) if startup_path.exists() else {}
+ runtime_ok=bool(startup.get('passed') and startup.get('head_sha256')==sha(head))
+ assert sha(head)==acceptance['source_hashes']['scripts/direct_query_feature_head.py'] or runtime_ok
  new=copy.deepcopy(cfg);remote='/root/autodl-tmp/underwater-segmentation'
  new['custom_imports']={'imports':['scripts.direct_query_feature_head'],'allow_failed_imports':False}
  new['model']['panoptic_head'].pop('match_valid_region');new['model']['panoptic_head'].update(type='DirectQueryFeatureHead',direct_query_features=True)
@@ -48,11 +52,16 @@ def main():
  groups=[]
  for name,count in [('panoptic_head.direct_c3.weight',131072),('panoptic_head.direct_c4.weight',262144)]:
   keys=new['optim_wrapper']['paramwise_cfg']['custom_keys'];assert not any(k in name for k in keys)
-  groups.append(dict(name=name,parameters=count,expected_lr=new['optim_wrapper']['optimizer']['lr'],expected_weight_decay=new['optim_wrapper']['optimizer']['weight_decay'],actual_optimizer_checked=False))
+  groups.append(dict(name=name,parameters=count,expected_lr=new['optim_wrapper']['optimizer']['lr'],expected_weight_decay=new['optim_wrapper']['optimizer']['weight_decay'],actual_optimizer_checked=runtime_ok))
  out=ROOT/'reports/direct-query-screen-preparation-20261101';out.mkdir(exist_ok=True)
  text='"""DRAFT: runtime RNG/optimizer/resume gates are pending. No training authorization."""\n'+''.join(k+' = '+pprint.pformat(v,sort_dicts=False,width=100)+'\n' for k,v in new.items())
  compile(text,'candidate.py','exec');(out/'candidate.py').write_text(text,encoding='utf8')
  comparison=json.loads((ROOT/'reports/valid-region-ap-screen-run/comparison.json').read_text());a=comparison['coco']['control']['stats'];e=comparison['coco']['E0']['stats']
- result=dict(local_preparation_passed=True,training_started=False,server_checked=False,old_A_protocol_evidence_valid=True,strict_paired_reuse_approved=False,runtime_preflight_passed=False,actual_optimizer_checked=False,data_rng_replay_checked=False,nonempty_optimizer_restore_checked=False,initial_weights_sha256=pre['checkpoint_sha256'],old_A_config_sha256=sha(old/'control.py'),old_A_predictions_sha256=sha(pred),old_A_checkpoint_sha256_from_verified_record=metrics['checkpoint_sha256'],candidate_config_sha256=sha(out/'candidate.py'),head_sha256=sha(head),config_differences=differences,expected_new_parameter_groups=groups,old_A_metrics=dict(AP=a[0],APs=a[3],APl=a[5]),gates=dict(AP=max(a[0],e[0])+.5,APs=max(a[3]+.5,e[3]),APl=max(a[5],e[5])-.3),pending=['Reconstruct sealed A startup and candidate startup without optimizer steps; compare sampler/worker seeds, augmented batch fingerprints and CPU/CUDA RNG before loss sampling.','Resolve RNG differences without changing baseline A history; do not merely reseed candidate and claim an exact historical pair.','Verify actual optimizer groups, empty initial state and synthetic nonempty-state save/restore without optimizer steps; distinguish fixture from real interrupted-training recovery.','Freeze independent finite-loss/gradient guards, budget, checkpoint contract and final-only evaluation entry before any training authorization.'])
+ result=dict(local_preparation_passed=True,training_started=False,server_checked=runtime_ok,old_A_protocol_evidence_valid=True,strict_paired_reuse_approved=False,runtime_preflight_passed=runtime_ok,actual_optimizer_checked=runtime_ok,data_rng_replay_checked=runtime_ok,nonempty_optimizer_restore_checked=runtime_ok,initial_weights_sha256=pre['checkpoint_sha256'],old_A_config_sha256=sha(old/'control.py'),old_A_predictions_sha256=sha(pred),old_A_checkpoint_sha256_from_verified_record=metrics['checkpoint_sha256'],candidate_config_sha256=sha(out/'candidate.py'),head_sha256=sha(head),config_differences=differences,expected_new_parameter_groups=groups,old_A_metrics=dict(AP=a[0],APs=a[3],APl=a[5]),gates=dict(AP=max(a[0],e[0])+.5,APs=max(a[3]+.5,e[3]),APl=max(a[5],e[5])-.3),pending=['Reconstruct sealed A startup and candidate startup without optimizer steps; compare sampler/worker seeds, augmented batch fingerprints and CPU/CUDA RNG before loss sampling.','Resolve RNG differences without changing baseline A history; do not merely reseed candidate and claim an exact historical pair.','Verify actual optimizer groups, empty initial state and synthetic nonempty-state save/restore without optimizer steps; distinguish fixture from real interrupted-training recovery.','Freeze independent finite-loss/gradient guards, budget, checkpoint contract and final-only evaluation entry before any training authorization.'])
+ if runtime_ok:
+  result['historical_A_usable_for_exploratory_screen']=True
+  result['historical_step_by_step_equivalence_proven']=False
+  result['startup_acceptance_sha256']=sha(startup_path)
+  result['pending']=['Independent finite/budget/checkpoint contracts and execution/evaluation orchestration are not prepared; no training authorization.','Diagnostic nonempty optimizer restore does not prove recovery after real updates.']
  (out/'preparation.json').write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

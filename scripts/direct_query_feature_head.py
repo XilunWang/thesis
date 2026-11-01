@@ -22,9 +22,12 @@ class DirectQueryFeatureHead(Mask2FormerHead):
         if self.decoder_embed_dims != 256 or self.num_transformer_feat_level != 3:
             raise ValueError('Expected original 256-channel, 3-scale decoder')
         self.direct_query_features = direct_query_features
-        self.direct_c3 = nn.Conv2d(512, 256, 1, bias=False)
-        self.direct_c4 = nn.Conv2d(1024, 256, 1, bias=False)
-        self._zero_direct_weights()
+        # These CPU-created projections are zeroed immediately. Do not let their
+        # discarded random initialization perturb the original training RNG.
+        with torch.random.fork_rng(devices=[]):
+            self.direct_c3 = nn.Conv2d(512, 256, 1, bias=False)
+            self.direct_c4 = nn.Conv2d(1024, 256, 1, bias=False)
+            self._zero_direct_weights()
 
     def _zero_direct_weights(self):
         nn.init.zeros_(self.direct_c3.weight)
