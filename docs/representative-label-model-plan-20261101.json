@@ -1,0 +1,62 @@
+{
+  "version": "representative-label-only-v1",
+  "training_updates_allowed": 0,
+  "head_checkpoints": [
+    0,
+    300
+  ],
+  "views": [
+    {
+      "image_id": 585,
+      "seed": 20261597,
+      "anchor_ids": [
+        2286
+      ],
+      "pairs": []
+    },
+    {
+      "image_id": 2809,
+      "seed": 20263821,
+      "anchor_ids": [
+        16538,
+        16539
+      ],
+      "pairs": [
+        [
+          16538,
+          16539
+        ]
+      ]
+    },
+    {
+      "image_id": 2811,
+      "seed": 21263823,
+      "anchor_ids": [
+        16581,
+        16610,
+        16582,
+        16592
+      ],
+      "pairs": [
+        [
+          16581,
+          16610
+        ],
+        [
+          16582,
+          16592
+        ]
+      ]
+    }
+  ],
+  "code_sha256": {
+    "representative_label_only.py": "0e7ffc32336123c4c389e2eb6c2c960bb4c803446257b6bed6d5071ed39fc98a",
+    "check-representative-label-model.py": "3cfc858de969b5499aa436eaa0febc775f0120544f42946b01b6da27884563b3",
+    "instance_representative.py": "91f56e0fa14281fba7c196b82e2170d1bea4ba634cd3492b84dfcf9b3e562bdf",
+    "isolated_position_head.py": "19053f8440eafbf01f0eaa429c995573e0243a8c679974694012be2f19df91be",
+    "check-representative-model.py": "dd0698579d773c557c4df2b2876a48b8fe8b17dfc1278756b0f960a148be1dc8"
+  },
+  "gate": "Engineering equivalence, labels, finite gradients, isolation and state invariance only; shared-parameter directions are diagnostic, not a zero-conflict gate.",
+  "frozen_scope": "Same three augmented views and two checkpoints; coral anchor is previously lost GT2286; no training or hyperparameter changes.",
+  "loss": "Existing position_loss only; per-image positive/negative means equally weighted if present; no extra ranking term, empty image unchanged."
+}
