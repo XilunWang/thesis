@@ -1,0 +1,127 @@
+{
+  "version": "coverage-priority-pilot-plan-v1",
+  "training_authorized": false,
+  "execution_entry_ready": false,
+  "training_updates_this_step": 0,
+  "steps": 300,
+  "batch_size": 2,
+  "max_training_seconds": 1800,
+  "settings": {
+    "optimizer": {
+      "type": "AdamW",
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08
+    },
+    "order_seed": 20261102,
+    "initialization_seed": 20261101,
+    "grad_clip_norm": 1.0,
+    "precision": "fp32",
+    "schedule": "constant",
+    "checkpoints": [
+      0,
+      100,
+      300
+    ],
+    "diagnostic_k": [
+      20,
+      50,
+      100,
+      200
+    ],
+    "primary_k": 100,
+    "random_control_seeds": [
+      20261201,
+      20261202,
+      20261203,
+      20261204,
+      20261205,
+      20261206,
+      20261207,
+      20261208,
+      20261209,
+      20261210
+    ]
+  },
+  "training_order_sha256": "aaed2ed6ee28732aaa3a5c7dfc76d11d2de76edf005beadc943d4e2cf9788050",
+  "initialization": {
+    "path": "reports/position-grid4-execution-20261101/step0.pth",
+    "sha256": "549724d10309bb571fde96182e9d142779d3dca0bc50ec3536eee34f89f04eaf",
+    "optimizer": "exact saved empty AdamW",
+    "rng": "restore saved RNG",
+    "prohibited": [
+      "label_only step300 continuation",
+      "coverage integration diagnostic step0"
+    ]
+  },
+  "single_change": "coverage_priority_objective coverage_priority=True; per-instance pixel coverage before score; same BCE and support",
+  "controls": {
+    "primary": "label-only-pilot-execution-20261101 step300",
+    "historical": "position-grid4-execution-20261101 step300",
+    "rerun_controls": false
+  },
+  "gates": {
+    "overall_hits_min": 535,
+    "fish_hits_min": 513,
+    "coral_hits_min": 17,
+    "occupied_pair_hits_min": 14,
+    "no_touch_max": 9196,
+    "redundant_max": 3204,
+    "no_annotated_gt_max": 3626
+  },
+  "gate_rationale": "Retain all observed adaptive-label coverage; recover original no-touch limit and original no-GT count. Keep original redundant bound: using adaptive1613 with no_touch9196 would be incompatible with fixed12800 slots even at all776 hits.",
+  "evaluation": {
+    "primary": "128 frozen holdout views /64 original training images, K100, finalstep300",
+    "all": "384 fixed views at0/100/300; K20/50/100/200 diagnostic only",
+    "no_gt": "same 4x4 any-pixel ownership as analyze-label-only-no-touch.py; not manually confirmed background",
+    "step0": "all original evaluation records exact before first update",
+    "full_logits": "retain float32 logits and valid masks for128 holdout views at0/100/300 with imageID,seed,input/GT/checkpoint hashes",
+    "training_labels": "save selected GT IDs,cells,GT pixel counts,positive-label hash per training visit; no historical reconstruction claims",
+    "descriptive": "all per-class coverage, geometric seeds, redundant and ownership metrics, image-paired bootstrap1000; fixed12 images diagnostic only"
+  },
+  "stop": "At300 stop and evaluate; no extension, no threshold search, no mid-checkpoint selection. Nonfinite/hash/label cardinality/model state mismatch or interruption stops and preserves evidence; no automatic restart.",
+  "scope": "Frozen E0, detached feature position head only; not segmentation training or AP evaluation",
+  "source_sha256": {
+    "reports\\label-only-pilot-execution-20261101\\step0.pth": "df7ff2792eb7775f29d9b30e3f490c38673eb8af888da0e9d109016b482df4bd",
+    "reports\\label-only-pilot-execution-20261101\\step100.pth": "67ae6f58c2f12370ac55aa77fcb25438ffd2a4f4a2745399b8c503cfca9bd4f8",
+    "reports\\label-only-pilot-execution-20261101\\step300.pth": "dd0231884361e6d3f1a39e5e6c24fb6ff7b8c6dfe4e74a347c915986aad0415c",
+    "reports\\label-only-pilot-execution-20261101\\eval-0.json": "f7c781c39509997aaa390c7c2f7f6f0a70fe843608b3251ded3429ed727cfb20",
+    "reports\\label-only-pilot-execution-20261101\\eval-100.json": "b60ecf64ef3efcdce12d35370dac2ee18a61ff78df5bcb6068be3bfcc6a468c4",
+    "reports\\label-only-pilot-execution-20261101\\eval-300.json": "ebbc694807fa843f43e10e1ac482858b8a96ba8893e110fdd89a5603cb240874",
+    "reports\\label-only-pilot-execution-20261101\\result.json": "7cd0860fafe4e2941c8b49afc5036a7981bd3044a769b80fcfc9a8e5f9b47eff",
+    "docs/label-only-pilot-plan-20261101.json": "50e6d26b16b08e7e4287df27964a7e078c766da9c6c0ac037acf68a0cec7929e",
+    "reports/position-learning-plan-grid4-20261101/views.json": "7cb62fb18dc0f92d7d1ad679063a0614b4cfefa706e593c4a44f186c9a8f539e",
+    "reports/coverage-priority-check-20261101/result.json": "9d75d609bfb47fa3630449b0245a8a35fb6dd67f45bd664f38ea54e0449028a7",
+    "reports/coverage-priority-integration-20261101/result.json": "04ec38815603bf838bf0a1e5dd32964a46dad3b8827c262ad5ee0f4355ab3f0b",
+    "reports/coverage-priority-integration-20261101/fresh-restore.json": "94f6d11fe501d193489e86a0af097c09125dbec40e152e5504d3443f27602ae8",
+    "reports/coverage-priority-integration-20261101/local.json": "5111a998c259b7588a9dfa22f46f147ddb5cceabcb0537e9838f45c121bb737a",
+    "reports/label-only-no-touch-20261101/result.json": "7d332c3718fbb45304190458fc3dce4b9acdb3aa74ff2ae1fc54270dcb773ba0"
+  },
+  "old_code_sha256": {
+    "identity_data_pipeline.py": "4083d953e4aa03a4a5028643168ebea1ddf85aa639f7a8618411372d96363e42",
+    "instance_representative.py": "91f56e0fa14281fba7c196b82e2170d1bea4ba634cd3492b84dfcf9b3e562bdf",
+    "isolated_position_head.py": "19053f8440eafbf01f0eaa429c995573e0243a8c679974694012be2f19df91be",
+    "label_only_pilot_metrics.py": "a258891f27a7ceccf5b86d193b8c58d16e9384c33508d20c45d15930e45c021b",
+    "position_grid4.py": "69be99f6b8803027060105dcdc0855d929b45448db94471032f8d1eb21397740",
+    "position_grid4_metrics.py": "195af9f7bec5e01b517740e6eced7d9fff52f629f2ca19a3eaf42cb11d0c7d20",
+    "position_pilot_runtime.py": "dbc7be76967498657014d51e696e81444d2e8e512a8232e9e3f01abd2a4da7a6",
+    "representative_label_only.py": "0e7ffc32336123c4c389e2eb6c2c960bb4c803446257b6bed6d5071ed39fc98a",
+    "run-label-only-pilot.py": "63076eb1130335ffe3a71ef9e9e769c122bed55c9c995a10495177ed30f5c206",
+    "run-position-grid4-pilot.py": "59b7c1563ea993d877fa1ca7a47c712ddf184d1be2fe0a9db00f642a754cefbc"
+  },
+  "candidate_code_sha256": {
+    "coverage_priority.py": "8feab78b59e1510e2b41d144eb3ed7256aaf725626167bc9ee13e5d756cd0bf9",
+    "coverage_priority_objective.py": "c73c9698e90fcd1605dd9385ca519239ea3864c88401d1850f56c13481a9cdcc"
+  },
+  "before_execute": [
+    "create separate default-dry-run execution entry",
+    "bind new plan/code/settings to new checkpoint kind",
+    "verify common step0 and evaluation equivalence",
+    "validate actual-label/full-logit recording without updates",
+    "explicit user training authorization"
+  ]
+}
